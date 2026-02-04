@@ -20,17 +20,17 @@ ext {
   postgresqlVersion           = "42.7.9"
   springBootVersion           = "4.0.2"
   mazeCommonsVersion          = "0.0.14"
-  mazeDtosHelloWorldVersion   = "0.0.9"
+  mazeDtosAssetsVersion   = "0.0.1"
   protobufJavaVersion         = "4.33.5"
-  grpcSpringBootVersion       = "0.12.0"
-  testContainersVersion       = "1.21.4"
+  grpcSpringBootVersion       = "1.0.2"
+  testContainersVersion       = "2.0.3"
   mapStructSPIProtobufVersion = "1.1.0"
   lombokMapstructBindingVersion = "0.2.0"
-  flywayVersion               = "11.20.3"
-  mapStructSpringVersion      = "1.1.3"
+  flywayVersion               = "12.0.0"
+  mapStructSpringVersion      = "2.0.0"
   cloudEventsSpringVersion    = "4.0.1"
   springCloudVersion          = "2025.1.1"
-  lz4JavaVersion              = "1.10.1"
+  lz4JavaVersion              = "1.10.3"
 }
 
 repositories {
@@ -58,7 +58,7 @@ repositories {
   }
 
   maven {
-    url "https://maven.pkg.github.com/maze-technology/tech.maze.dtos.helloworld"
+    url "https://maven.pkg.github.com/maze-technology/data-assets-specs"
 
     // INFO: Pulling from GitHub Packages (even public ones) requires a personal access token
     // https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token
@@ -95,7 +95,7 @@ dependencies {
   implementation "tech.maze:commons:$mazeCommonsVersion"
 
   // Maze Hello World DTOs
-  implementation "tech.maze:dtos.helloworld:$mazeDtosHelloWorldVersion"
+  implementation "tech.maze:dtos.assets:$mazeDtosAssetsVersion"
 
   // Spring Boot
   implementation "org.springframework.boot:spring-boot-starter-validation"
@@ -149,11 +149,11 @@ dependencies {
 
   // JUnit Test Framework
   testImplementation "org.springframework.boot:spring-boot-starter-test"
-  testImplementation "org.testcontainers:junit-jupiter"
+  testImplementation "org.testcontainers:testcontainers-junit-jupiter"
   testImplementation "org.testcontainers:testcontainers"
   testImplementation "org.awaitility:awaitility"
-  testImplementation "org.testcontainers:localstack"
-  testImplementation "org.testcontainers:postgresql"
+  testImplementation "org.testcontainers:testcontainers-localstack"
+  testImplementation "org.testcontainers:testcontainers-postgresql"
   testImplementation "org.junit.jupiter:junit-jupiter"
   testImplementation "org.junit.jupiter:junit-jupiter-api"
   testImplementation "org.junit.jupiter:junit-jupiter-engine"
@@ -166,7 +166,7 @@ dependencies {
 }
 
 checkstyle {
-  toolVersion = "10.26.1"
+  toolVersion = "13.1.0"
   config = resources.text.fromFile("$rootDir/config/checkstyle/checkstyle.xml")
   maxWarnings = 0
   ignoreFailures = false
@@ -234,9 +234,6 @@ jacocoTestReport {
         '**/domain/ports/**',
         // Entities - JPA entities, data containers
         '**/infrastructure/persistence/entities/**',
-        // Event stream handlers (integration-level)
-        '**/infrastructure/eventstream/**',
-        '**/api/eventstream/**',
         // Mappers - MapStruct interfaces (code is generated)
         '**/api/mappers/**',
         '**/infrastructure/persistence/mappers/**',
@@ -280,7 +277,6 @@ jacocoTestCoverageVerification {
         '**/infrastructure/persistence/entities/**',
         // Event stream handlers (integration-level)
         '**/infrastructure/eventstream/**',
-        '**/api/eventstream/**',
         // Mappers - MapStruct interfaces (code is generated)
         '**/api/mappers/**',
         '**/infrastructure/persistence/mappers/**',
@@ -351,5 +347,5 @@ bootBuildImage {
 }
 
 application {
-  mainClass = "tech.maze.helloworld.backend.App"
+  mainClass = "tech.maze.data.assets.backend.App"
 }

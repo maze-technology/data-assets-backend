@@ -1,13 +1,10 @@
 logging:
   level:
     root: info
-    # Maze
     tech.maze: info
-    # database
     org.hibernate.SQL: warn
     com.zaxxer.hikari.HikariConfig: warn
     com.zaxxer.hikari: warn
-
 spring:
   main:
     banner-mode: 'off'
@@ -16,10 +13,10 @@ spring:
     default:
       configuration:
         maximum-pool-size: 2
-        minimum-idle: 2 # INFO: minimum number of idle connections maintained by HikariCP in a connection pool
-        max-lifetime: 1800000 # INFO: maximum lifetime in milliseconds of a connection in the pool after it is closed.
+        minimum-idle: 2
+        max-lifetime: 1800000
         idle-timeout: 30000
-        connection-timeout: 20000 # INFO: maximum number of milliseconds that a client will wait for a connection
+        connection-timeout: 20000
   jpa:
     show-sql: false
     properties:
@@ -31,19 +28,3 @@ spring:
     enabled: true
   cache:
     enabled: false
-  cloud:
-    function:
-      definition: addRequestConsumer
-    stream:
-      bindings:
-        addRequestConsumer-in-0:
-          destination: helloworld.add.request
-          group: hello-world
-      kafka:
-        binder:
-          brokers: ${KAFKA_BROKERS:localhost:9092}
-
-maze:
-  events:
-    enabled: true
-    source: urn:service:hello-world
