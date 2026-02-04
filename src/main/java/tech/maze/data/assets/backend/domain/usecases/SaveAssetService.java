@@ -6,11 +6,11 @@ import tech.maze.data.assets.backend.domain.models.Asset;
 import tech.maze.data.assets.backend.domain.ports.in.SaveAssetUseCase;
 import tech.maze.data.assets.backend.domain.ports.out.SaveAssetPort;
 
+/**
+ * Use case for saving assets.
+ */
 @Service
 @RequiredArgsConstructor
-/**
- * Generated type.
- */
 public class SaveAssetService implements SaveAssetUseCase {
   private final SaveAssetPort saveAssetPort;
 

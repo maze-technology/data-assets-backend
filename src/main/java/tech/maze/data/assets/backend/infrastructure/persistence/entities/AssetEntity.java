@@ -11,14 +11,14 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import tech.maze.data.assets.backend.domain.models.PrimaryClass;
 
+/**
+ * JPA entity for assets.
+ */
 @Entity
 @Table(name = "assets")
 @Getter
 @Setter
 @NoArgsConstructor
-/**
- * Generated type.
- */
 public class AssetEntity {
   @Id
   private UUID id;

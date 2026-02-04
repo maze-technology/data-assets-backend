@@ -8,11 +8,11 @@ import tech.maze.data.assets.backend.domain.models.Asset;
 import tech.maze.data.assets.backend.domain.ports.in.FindAssetUseCase;
 import tech.maze.data.assets.backend.domain.ports.out.LoadAssetPort;
 
+/**
+ * Use case for loading an asset by id.
+ */
 @Service
 @RequiredArgsConstructor
-/**
- * Generated type.
- */
 public class FindAssetService implements FindAssetUseCase {
   private final LoadAssetPort loadAssetPort;
 

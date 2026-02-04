@@ -11,9 +11,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Data
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @ConfigurationProperties(prefix = AppProperties.PREFIX)
-/**
- * Generated type.
- */
 public class AppProperties {
   public static final String PREFIX = "maze";
 

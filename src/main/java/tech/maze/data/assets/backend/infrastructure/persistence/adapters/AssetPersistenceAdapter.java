@@ -12,11 +12,11 @@ import tech.maze.data.assets.backend.domain.ports.out.SearchAssetsPort;
 import tech.maze.data.assets.backend.infrastructure.persistence.mappers.AssetEntityMapper;
 import tech.maze.data.assets.backend.infrastructure.persistence.repositories.AssetJpaRepository;
 
+/**
+ * Persistence adapter for assets.
+ */
 @Component
 @RequiredArgsConstructor
-/**
- * Generated type.
- */
 public class AssetPersistenceAdapter implements LoadAssetPort, SaveAssetPort, SearchAssetsPort {
   private final AssetJpaRepository assetJpaRepository;
   private final AssetEntityMapper assetEntityMapper;
