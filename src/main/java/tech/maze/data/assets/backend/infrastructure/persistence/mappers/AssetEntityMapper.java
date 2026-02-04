@@ -13,6 +13,7 @@ public interface AssetEntityMapper {
    * Generated method.
    */
   Asset toDomain(AssetEntity entity);
+
   /**
    * Generated method.
    */
