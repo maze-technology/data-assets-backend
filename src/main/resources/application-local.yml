@@ -1,0 +1,27 @@
+logging:
+  level:
+    root: info
+
+    # Maze
+    tech.maze: info
+
+    # Database
+    org.hibernate.SQL: warn
+
+maze:
+  name: hello-world
+
+spring:
+  datasource:
+    enabled: true
+    default:
+      url: jdbc:postgresql://localhost:5432/local
+      username: local
+      password: local
+  cloud:
+    aws:
+      region:
+        static: eu-central-1
+      credentials:
+        access-key: localstackAccessKeyId
+        secret-key: localstackSecretAccessKey
