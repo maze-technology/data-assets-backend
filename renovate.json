@@ -1,0 +1,46 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "automerge": true,
+  "automergeType": "pr",
+  "gradle": {
+    "enabled": true
+  },
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["/(^|/)build\\.gradle$/"],
+      "matchStrings": [
+        "builder\\s*=\\s*[\"'](?<depName>.*?):(?<currentValue>.*?)[\"']"
+      ],
+      "datasourceTemplate": "docker"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchCategories": ["docker"],
+      "enabled": true
+    },
+    {
+      "matchManagers": ["gradle"],
+      "schedule": ["every weekday"],
+      "reviewers": ["maze-technology/engineers"],
+      "groupName": "Gradle"
+    },
+    {
+      "matchManagers": ["docker", "custom.regex"],
+      "matchDatasources": ["docker"],
+      "schedule": ["every weekday"],
+      "reviewers": ["maze-technology/infrastructure-engineers"],
+      "groupName": "Docker"
+    },
+    {
+      "matchManagers": ["github-actions"],
+      "schedule": ["every weekday"],
+      "reviewers": ["maze-technology/infrastructure-engineers"],
+      "groupName": "GitHub Actions"
+    }
+  ],
+  "dependencyDashboard": true,
+  "configMigration": true
+}

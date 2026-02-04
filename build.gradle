@@ -1,0 +1,324 @@
+plugins {
+  id("java")
+  id("jacoco")
+  id("checkstyle")
+  id("application")
+  id("com.github.spotbugs") version "6.4.7"
+  id("org.springframework.boot") version "3.5.8"
+  id("io.spring.dependency-management") version "1.1.7"
+}
+
+group = "tech.maze"
+
+ext {
+  jakartaVersion              = "3.0.0"
+  junitVersion                = "6.0.1"
+  lombokVersion               = "1.18.42"
+  wiremockVersion             = "3.13.2"
+  mapStructVersion            = "1.6.3"
+  snakeyamlVersion            = "2.5"
+  postgresqlVersion           = "42.7.8"
+  springBootVersion           = "3.5.8"
+  mazeCommonsVersion          = "0.0.11"
+  mazeDtosHelloWorldVersion   = "0.0.4"
+  protobufJavaVersion         = "4.33.1"
+  grpcSpringBootVersion       = "0.12.0"
+  testContainersVersion       = "1.21.3"
+  mapStructSPIProtobufVersion = "1.1.0"
+  lombokMapstructBindingVersion = "0.2.0"
+  flywayVersion               = "11.18.0"
+  mapStructSpringVersion      = "1.1.3"
+}
+
+repositories {
+  mavenLocal()
+  mavenCentral()
+  gradlePluginPortal()
+
+  maven {
+    url "https://repo.spring.io/milestone"
+  }
+
+  maven {
+    url "https://repo.spring.io/release"
+  }
+
+  maven {
+    url "https://maven.pkg.github.com/maze-technology/tech.maze.commons"
+
+    // INFO: Pulling from GitHub Packages (even public ones) requires a personal access token
+    // https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token
+    credentials {
+      username = System.getenv("GITHUB_USERNAME")
+      password = System.getenv("GITHUB_TOKEN")
+    }
+  }
+
+  maven {
+    url "https://maven.pkg.github.com/maze-technology/tech.maze.dtos.helloworld"
+
+    // INFO: Pulling from GitHub Packages (even public ones) requires a personal access token
+    // https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token
+    credentials {
+      username = System.getenv("GITHUB_USERNAME")
+      password = System.getenv("GITHUB_TOKEN")
+    }
+  }
+}
+
+dependencyManagement {
+  imports {
+    mavenBom "org.junit:junit-bom:$junitVersion"
+    mavenBom "org.testcontainers:testcontainers-bom:$testContainersVersion"
+    mavenBom "org.springframework.boot:spring-boot-dependencies:$springBootVersion"
+  }
+}
+
+dependencies {
+  // Maze Commons
+  implementation "tech.maze:commons:$mazeCommonsVersion"
+
+  // Maze Hello World DTOs
+  implementation "tech.maze:dtos.helloworld:$mazeDtosHelloWorldVersion"
+
+  // Spring Boot
+  implementation "org.springframework.boot:spring-boot-starter-validation"
+  implementation "org.springframework:spring-messaging"
+  implementation "org.yaml:snakeyaml:$snakeyamlVersion"
+
+  // Spring Boot GRPC
+  implementation "org.springframework.grpc:spring-grpc-spring-boot-starter:$grpcSpringBootVersion"
+  implementation platform("org.springframework.grpc:spring-grpc-dependencies:$grpcSpringBootVersion")
+
+  // Protobuf Java Util
+  implementation "com.google.protobuf:protobuf-java-util:$protobufJavaVersion"
+
+  // Database
+  implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+
+  // Flyway
+  implementation "org.flywaydb:flyway-core:$flywayVersion"
+  implementation "org.flywaydb:flyway-database-postgresql:$flywayVersion"
+
+  // PostgreSQL
+  implementation "org.postgresql:postgresql:$postgresqlVersion"
+
+  // MapStruct
+  implementation "org.mapstruct:mapstruct:$mapStructVersion"
+  annotationProcessor "org.mapstruct:mapstruct-processor:$mapStructVersion"
+  // MapStruct SPI Protobuf mapping
+  annotationProcessor "de.firehead:mapstruct-spi-protobuf:$mapStructSPIProtobufVersion"
+  // Lombok Mapstruct mapping (Builder support)
+  annotationProcessor "org.projectlombok:lombok-mapstruct-binding:$lombokMapstructBindingVersion"
+  implementation "org.mapstruct.extensions.spring:mapstruct-spring-annotations:$mapStructSpringVersion"
+  annotationProcessor "org.mapstruct.extensions.spring:mapstruct-spring-extensions:$mapStructSpringVersion"
+
+  // Lombok
+  compileOnly "org.projectlombok:lombok:$lombokVersion"
+  annotationProcessor "org.projectlombok:lombok:$lombokVersion"
+  testCompileOnly "org.projectlombok:lombok:$lombokVersion"
+	testAnnotationProcessor "org.projectlombok:lombok:$lombokVersion"
+
+  annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+  implementation "jakarta.annotation:jakarta.annotation-api:$jakartaVersion"
+
+  // JUnit Test Framework
+  testImplementation "org.springframework.boot:spring-boot-starter-test"
+  testImplementation "org.testcontainers:junit-jupiter"
+  testImplementation "org.testcontainers:testcontainers"
+  testImplementation "org.awaitility:awaitility"
+  testImplementation "org.testcontainers:localstack"
+  testImplementation "org.testcontainers:postgresql"
+  testImplementation "org.junit.jupiter:junit-jupiter"
+  testImplementation "org.junit.jupiter:junit-jupiter-api"
+  testImplementation "org.junit.jupiter:junit-jupiter-engine"
+  testImplementation "org.mapstruct.extensions.spring:mapstruct-spring-test-extensions:$mapStructSpringVersion"
+  testAnnotationProcessor "org.mapstruct.extensions.spring:mapstruct-spring-extensions:$mapStructSpringVersion"
+  testImplementation "org.springframework.boot:spring-boot-testcontainers"
+
+  // Mock Frameworks
+  testImplementation "org.wiremock:wiremock-standalone:$wiremockVersion"
+}
+
+checkstyle {
+  toolVersion = "10.26.1"
+  config = resources.text.fromFile("$rootDir/config/checkstyle/checkstyle.xml")
+  maxWarnings = 0
+  ignoreFailures = false
+  sourceSets = [project.sourceSets.main]
+}
+
+import com.github.spotbugs.snom.Confidence
+import com.github.spotbugs.snom.Effort
+
+spotbugs {
+  projectName = name
+  maxHeapSize = "512m"
+  showProgress = false
+  ignoreFailures = true
+  showStackTraces = true
+  effort = Effort.valueOf("DEFAULT")
+  reportLevel = Confidence.valueOf("DEFAULT")
+}
+
+spotbugsMain {
+  reports {
+    html {
+      required = true
+      outputLocation = file("$buildDir/reports/spotbugs/main/spotbugs.html")
+      stylesheet = "fancy-hist.xsl"
+    }
+  }
+}
+
+test {
+  useJUnitPlatform()
+  finalizedBy(jacocoTestReport)
+
+  testLogging {
+    events "passed", "skipped", "failed"
+  }
+
+  reports {
+    junitXml {
+      required = true
+    }
+  }
+}
+
+jacocoTestReport {
+  sourceSets(sourceSets.main)
+  executionData fileTree(project.rootDir.absolutePath).include("**/build/jacoco/*.exec")
+
+  reports {
+    xml {
+      required = true
+    }
+    csv {
+      required = false
+    }
+  }
+
+  afterEvaluate {
+    // INFO: Only include classes from our project, exclude all third-party libraries
+    classDirectories.setFrom(
+      fileTree(dir: "${buildDir}/classes/java/main/tech/maze", exclude: [
+        // Domain models - pure data structures
+        '**/domain/models/**',
+        // Ports - interfaces only
+        '**/domain/ports/**',
+        // Entities - JPA entities, data containers
+        '**/infrastructure/persistence/entities/**',
+        // Mappers - MapStruct interfaces (code is generated)
+        '**/api/mappers/**',
+        '**/infrastructure/persistence/mappers/**',
+        // Configuration classes - wiring code
+        '**/infrastructure/config/**',
+        '**/AppConfiguration.class',
+        '**/AppProperties.class',
+        '**/App.class',
+        // Repository interfaces - Spring Data interfaces
+        '**/infrastructure/persistence/repositories/*Repository.class'
+      ])
+    )
+  }
+
+  dependsOn test
+  mustRunAfter javadoc
+}
+
+tasks.named("jacocoTestReport") {
+  dependsOn "bootStartScripts", "compileIntegrationTestJava", "integrationTest", "processIntegrationTestResources", "startScripts"
+}
+
+jacocoTestCoverageVerification {
+  violationRules {
+    rule {
+      limit {
+        minimum = 0.8
+      }
+    }
+  }
+
+  afterEvaluate {
+    // INFO: Only include classes from our project, exclude all third-party libraries
+    classDirectories.setFrom(
+      fileTree(dir: "${buildDir}/classes/java/main/tech/maze", exclude: [
+        // Domain models - pure data structures
+        '**/domain/models/**',
+        // Ports - interfaces only
+        '**/domain/ports/**',
+        // Entities - JPA entities, data containers
+        '**/infrastructure/persistence/entities/**',
+        // Mappers - MapStruct interfaces (code is generated)
+        '**/api/mappers/**',
+        '**/infrastructure/persistence/mappers/**',
+        // Configuration classes - wiring code
+        '**/infrastructure/config/**',
+        '**/AppConfiguration.class',
+        '**/AppProperties.class',
+        '**/App.class',
+        // Repository interfaces - Spring Data interfaces
+        '**/infrastructure/persistence/repositories/*Repository.class'
+      ])
+    )
+  }
+}
+
+testing {
+  suites {
+    integrationTest(JvmTestSuite) {
+      dependencies {
+        implementation project()
+      }
+    }
+  }
+}
+
+tasks.withType(Javadoc).configureEach {
+  options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+tasks.named("checkstyleMain", Checkstyle) {
+  showViolations = true
+
+  reports {
+    xml {
+      required = true
+    }
+    html {
+      required = true
+    }
+  }
+}
+
+tasks.named("check") {
+  dependsOn testing.suites.integrationTest
+  dependsOn javadoc
+}
+
+// Add this to ensure checkstyle runs before check
+tasks.named("check").configure {
+  dependsOn checkstyleMain
+}
+
+bootBuildImage {
+  builder = "paketobuildpacks/builder-jammy-base:0.4.510"
+  // https://github.com/paketo-buildpacks/builder-jammy-base/
+
+  environment = [
+    'BP_ENABLE_RUNTIME_CERT_BINDING': "false",
+    'BP_NATIVE_IMAGE'               : "false",
+  ]
+
+  docker {
+    publishRegistry {
+      username = System.getenv("DOCKER_USERNAME")
+      password = System.getenv("DOCKER_PASSWORD")
+    }
+  }
+}
+
+application {
+  mainClass = "tech.maze.helloworld.backend.App"
+}

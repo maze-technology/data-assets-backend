@@ -1,0 +1,22 @@
+spring:
+  cloud:
+    aws:
+      stack:
+        auto: false
+        enabled: false
+      credentials:
+        access-key: localstackAccessKeyId
+        secret-key: localstackSecretAccessKey
+      region:
+        static: eu-central-1
+      sqs:
+        region: eu-central-1
+        endpoint: http://localhost:4566
+        listener:
+          auto-startup: false
+          fail-on-missing-queue: false
+          default-deletion-policy: NO_REDRIVE
+          max-number-of-messages: 10
+          visibility-timeout: 30 # 30s
+          wait-timeout: 20 # 20s
+          back-off-time: 10000 # 10s
