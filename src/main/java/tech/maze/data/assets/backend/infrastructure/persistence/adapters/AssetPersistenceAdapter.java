@@ -14,6 +14,9 @@ import tech.maze.data.assets.backend.infrastructure.persistence.repositories.Ass
 
 @Component
 @RequiredArgsConstructor
+/**
+ * Generated type.
+ */
 public class AssetPersistenceAdapter implements LoadAssetPort, SaveAssetPort, SearchAssetsPort {
   private final AssetJpaRepository assetJpaRepository;
   private final AssetEntityMapper assetEntityMapper;

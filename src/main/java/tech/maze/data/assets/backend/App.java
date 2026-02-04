@@ -7,6 +7,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * The main entry point of the Spring Boot application.
  */
 @SpringBootApplication
+/**
+ * Generated type.
+ */
 public class App {
   /**
    * The entry point of the Spring Boot application.

@@ -16,6 +16,9 @@ import tech.maze.data.assets.backend.domain.models.PrimaryClass;
 @Getter
 @Setter
 @NoArgsConstructor
+/**
+ * Generated type.
+ */
 public class AssetEntity {
   @Id
   private UUID id;

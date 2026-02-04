@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 import tech.maze.data.assets.backend.infrastructure.persistence.entities.AssetEntity;
 
 @Repository
+/**
+ * Generated type.
+ */
 public interface AssetJpaRepository extends JpaRepository<AssetEntity, UUID> {}

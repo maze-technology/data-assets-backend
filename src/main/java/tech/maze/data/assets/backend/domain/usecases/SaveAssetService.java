@@ -8,6 +8,9 @@ import tech.maze.data.assets.backend.domain.ports.out.SaveAssetPort;
 
 @Service
 @RequiredArgsConstructor
+/**
+ * Generated type.
+ */
 public class SaveAssetService implements SaveAssetUseCase {
   private final SaveAssetPort saveAssetPort;
 

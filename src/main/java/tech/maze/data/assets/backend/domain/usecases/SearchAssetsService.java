@@ -9,6 +9,9 @@ import tech.maze.data.assets.backend.domain.ports.out.SearchAssetsPort;
 
 @Service
 @RequiredArgsConstructor
+/**
+ * Generated type.
+ */
 public class SearchAssetsService implements SearchAssetsUseCase {
   private final SearchAssetsPort searchAssetsPort;
 
