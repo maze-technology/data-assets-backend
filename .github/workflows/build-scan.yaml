@@ -123,7 +123,6 @@ jobs:
         with:
           username: ${{ env.DOCKER_USERNAME }}
           password: ${{ env.DOCKER_PASSWORD }}
-
       - name: Pull latest image for comparison
         id: pull_latest
         if: github.event_name == 'pull_request'
@@ -132,8 +131,10 @@ jobs:
         run: |
           if docker pull ${{ env.LATEST_IMAGE }}; then
             echo "Successfully pulled baseline image for comparison"
+            echo "baseline=true" >> $GITHUB_OUTPUT
           else
             echo "No baseline image found, skipping baseline comparison"
+            echo "baseline=false" >> $GITHUB_OUTPUT
           fi
         continue-on-error: true
 
@@ -161,7 +162,7 @@ jobs:
 
       - name: Scan baseline image with Trivy
         id: scan_baseline
-        if: github.event_name == 'pull_request' && steps.pull_latest.outcome == 'success'
+        if: github.event_name == 'pull_request' && steps.pull_latest.outputs.baseline == 'true'
         uses: aquasecurity/trivy-action@0.33.1
         env:
           LATEST_IMAGE: "${{ env.DOCKER_REPOSITORY }}:latest"

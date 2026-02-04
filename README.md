@@ -1,21 +1,21 @@
-# Java Hello World Backend Service Template
+# Data Assets Backend Service
 
-This project is a template for creating Java gRPC based microservices using Spring. It includes a basic structure with common configurations and dependencies to help you get started quickly.
+Backend service for the data assets domain, built with Spring Boot and Maze conventions.
 
-[![Continuous Integration (CI)](https://github.com/maze-technology/java-hello-world-backend-template/actions/workflows/publish.yaml/badge.svg?branch=main)](https://github.com/maze-technology/java-hello-world-backend-template/actions/workflows/publish.yaml)
+[![Continuous Integration (CI)](https://github.com/maze-technology/data-assets-backend/actions/workflows/publish.yaml/badge.svg?branch=main)](https://github.com/maze-technology/data-assets-backend/actions/workflows/publish.yaml)
 
 ## Quality
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_java-hello-world-backend-template&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=maze-technology_java-hello-world-backend-template)
-[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_java-hello-world-backend-template&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=maze-technology_java-hello-world-backend-template)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_java-hello-world-backend-template&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=maze-technology_java-hello-world-backend-template)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_java-hello-world-backend-template&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=maze-technology_java-hello-world-backend-template)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_java-hello-world-backend-template&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=maze-technology_java-hello-world-backend-template)
-[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_java-hello-world-backend-template&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=maze-technology_java-hello-world-backend-template)
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_java-hello-world-backend-template&metric=coverage)](https://sonarcloud.io/summary/new_code?id=maze-technology_java-hello-world-backend-template)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_java-hello-world-backend-template&metric=bugs)](https://sonarcloud.io/summary/new_code?id=maze-technology_java-hello-world-backend-template)
-[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_java-hello-world-backend-template&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=maze-technology_java-hello-world-backend-template)
-[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_java-hello-world-backend-template&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=maze-technology_java-hello-world-backend-template)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_data-assets-backend&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=maze-technology_data-assets-backend)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_data-assets-backend&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=maze-technology_data-assets-backend)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_data-assets-backend&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=maze-technology_data-assets-backend)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_data-assets-backend&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=maze-technology_data-assets-backend)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_data-assets-backend&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=maze-technology_data-assets-backend)
+[![Technical Debt](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_data-assets-backend&metric=sqale_index)](https://sonarcloud.io/summary/new_code?id=maze-technology_data-assets-backend)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_data-assets-backend&metric=coverage)](https://sonarcloud.io/summary/new_code?id=maze-technology_data-assets-backend)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_data-assets-backend&metric=bugs)](https://sonarcloud.io/summary/new_code?id=maze-technology_data-assets-backend)
+[![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_data-assets-backend&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=maze-technology_data-assets-backend)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=maze-technology_data-assets-backend&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=maze-technology_data-assets-backend)
 
 ## Commands
 
