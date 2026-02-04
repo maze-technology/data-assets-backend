@@ -20,7 +20,7 @@ ext {
   postgresqlVersion           = "42.7.9"
   springBootVersion           = "4.0.2"
   mazeCommonsVersion          = "0.0.14"
-  mazeDtosHelloWorldVersion   = "0.0.9"
+  mazeDtosAssetsVersion   = "0.0.1"
   protobufJavaVersion         = "4.33.5"
   grpcSpringBootVersion       = "1.0.2"
   testContainersVersion       = "2.0.3"
@@ -58,7 +58,7 @@ repositories {
   }
 
   maven {
-    url "https://maven.pkg.github.com/maze-technology/tech.maze.dtos.helloworld"
+    url "https://maven.pkg.github.com/maze-technology/data-assets-specs"
 
     // INFO: Pulling from GitHub Packages (even public ones) requires a personal access token
     // https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token
@@ -95,7 +95,7 @@ dependencies {
   implementation "tech.maze:commons:$mazeCommonsVersion"
 
   // Maze Hello World DTOs
-  implementation "tech.maze:dtos.helloworld:$mazeDtosHelloWorldVersion"
+  implementation "tech.maze:dtos.assets:$mazeDtosAssetsVersion"
 
   // Spring Boot
   implementation "org.springframework.boot:spring-boot-starter-validation"
@@ -347,5 +347,5 @@ bootBuildImage {
 }
 
 application {
-  mainClass = "tech.maze.helloworld.backend.App"
+  mainClass = "tech.maze.data.assets.backend.App"
 }

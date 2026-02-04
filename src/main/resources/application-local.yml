@@ -9,7 +9,7 @@ logging:
     org.hibernate.SQL: warn
 
 maze:
-  name: hello-world
+  name: data-assets
 
 spring:
   datasource:

@@ -1,4 +1,4 @@
-package tech.maze.helloworld.backend;
+package tech.maze.data.assets.backend;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +10,7 @@ import tech.maze.commons.CommonsConfiguration;
  */
 @Configuration
 @Import({CommonsConfiguration.class})
-@ComponentScan("tech.maze.helloworld.backend")
+@ComponentScan("tech.maze.data.assets.backend")
 public class AppConfiguration {
 
 }
