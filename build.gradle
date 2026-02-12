@@ -26,7 +26,7 @@ ext {
   testContainersVersion       = "2.0.3"
   mapStructSPIProtobufVersion = "1.1.0"
   lombokMapstructBindingVersion = "0.2.0"
-  flywayVersion               = "12.0.0"
+  flywayVersion               = "12.0.1"
   mapStructSpringVersion      = "2.0.0"
   cloudEventsSpringVersion    = "4.0.1"
   springCloudVersion          = "2025.1.1"
