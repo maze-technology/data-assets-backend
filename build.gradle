@@ -12,7 +12,7 @@ group = "tech.maze"
 
 ext {
   jakartaVersion              = "3.0.0"
-  junitVersion                = "6.0.2"
+  junitVersion                = "6.0.3"
   lombokVersion               = "1.18.42"
   wiremockVersion             = "3.13.2"
   mapStructVersion            = "1.6.3"
