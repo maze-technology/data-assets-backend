@@ -18,7 +18,8 @@ import tech.maze.data.assets.backend.domain.ports.in.SearchAssetsUseCase;
 @RequiredArgsConstructor
 @Service
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
-public class AssetsGrpcController extends tech.maze.dtos.assets.controllers.AssetsGRPCGrpc.AssetsGRPCImplBase {
+public class AssetsGrpcController
+    extends tech.maze.dtos.assets.controllers.AssetsGRPCGrpc.AssetsGRPCImplBase {
   FindAssetUseCase findAssetUseCase;
   SearchAssetsUseCase searchAssetsUseCase;
   FindOneAssetRequestMapper findOneAssetRequestMapper;

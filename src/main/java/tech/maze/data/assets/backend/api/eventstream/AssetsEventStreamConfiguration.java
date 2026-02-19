@@ -44,7 +44,11 @@ public class AssetsEventStreamConfiguration {
         return;
       }
 
-      sendReply(event, Empty.getDefaultInstance(), tech.maze.dtos.assets.events.EventTypes.FETCH_ASSETS_REQUEST);
+      sendReply(
+          event,
+          Empty.getDefaultInstance(),
+          tech.maze.dtos.assets.events.EventTypes.FETCH_ASSETS_REQUEST
+      );
     };
   }
 
@@ -65,7 +69,11 @@ public class AssetsEventStreamConfiguration {
         return;
       }
 
-      sendReply(event, Empty.getDefaultInstance(), tech.maze.dtos.assets.events.EventTypes.SYNC_ASSETS_REQUEST);
+      sendReply(
+          event,
+          Empty.getDefaultInstance(),
+          tech.maze.dtos.assets.events.EventTypes.SYNC_ASSETS_REQUEST
+      );
     };
   }
 
