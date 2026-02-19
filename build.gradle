@@ -234,7 +234,9 @@ jacocoTestReport {
         '**/domain/ports/**',
         // Entities - JPA entities, data containers
         '**/infrastructure/persistence/entities/**',
-        // Mappers - MapStruct interfaces (code is generated)
+        // API layer (grpc/eventstream/mappers) covered by separate integration tests
+        '**/api/controllers/**',
+        '**/api/eventstream/**',
         '**/api/mappers/**',
         '**/infrastructure/persistence/mappers/**',
         // Configuration classes - wiring code
@@ -277,7 +279,9 @@ jacocoTestCoverageVerification {
         '**/infrastructure/persistence/entities/**',
         // Event stream handlers (integration-level)
         '**/infrastructure/eventstream/**',
-        // Mappers - MapStruct interfaces (code is generated)
+        // API layer (grpc/eventstream/mappers) covered by separate integration tests
+        '**/api/controllers/**',
+        '**/api/eventstream/**',
         '**/api/mappers/**',
         '**/infrastructure/persistence/mappers/**',
         // Configuration classes - wiring code
