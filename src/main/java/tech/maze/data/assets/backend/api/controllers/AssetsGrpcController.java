@@ -9,8 +9,10 @@ import org.springframework.stereotype.Service;
 import tech.maze.data.assets.backend.api.mappers.AssetDtoMapper;
 import tech.maze.data.assets.backend.api.mappers.FindOneAssetRequestMapper;
 import tech.maze.data.assets.backend.domain.models.Asset;
+import tech.maze.data.assets.backend.domain.ports.in.BlacklistAssetUseCase;
 import tech.maze.data.assets.backend.domain.ports.in.FindAssetUseCase;
 import tech.maze.data.assets.backend.domain.ports.in.SearchAssetsUseCase;
+import tech.maze.data.assets.backend.domain.ports.in.WhitelistAssetUseCase;
 
 /**
  * gRPC controller for assets API operations.
@@ -24,14 +26,17 @@ public class AssetsGrpcController
   SearchAssetsUseCase searchAssetsUseCase;
   FindOneAssetRequestMapper findOneAssetRequestMapper;
   AssetDtoMapper assetDtoMapper;
+  BlacklistAssetUseCase blacklistAssetUseCase;
+  WhitelistAssetUseCase whitelistAssetUseCase;
 
   @Override
   public void findOne(
       tech.maze.dtos.assets.requests.FindOneRequest request,
       StreamObserver<tech.maze.dtos.assets.requests.FindOneResponse> responseObserver
   ) {
-    final var responseBuilder = tech.maze.dtos.assets.requests.FindOneResponse.newBuilder();
-    final var id = findOneAssetRequestMapper.toId(request);
+    tech.maze.dtos.assets.requests.FindOneResponse.Builder responseBuilder =
+        tech.maze.dtos.assets.requests.FindOneResponse.newBuilder();
+    java.util.UUID id = findOneAssetRequestMapper.toId(request);
 
     if (id != null) {
       findAssetUseCase.findById(id)
@@ -49,9 +54,10 @@ public class AssetsGrpcController
       StreamObserver<tech.maze.dtos.assets.requests.FindByDataProvidersResponse> responseObserver
   ) {
     final List<Asset> assets = searchAssetsUseCase.findAll();
-    final var response = tech.maze.dtos.assets.requests.FindByDataProvidersResponse.newBuilder()
-        .addAllAssets(assets.stream().map(assetDtoMapper::toDto).toList())
-        .build();
+    tech.maze.dtos.assets.requests.FindByDataProvidersResponse response =
+        tech.maze.dtos.assets.requests.FindByDataProvidersResponse.newBuilder()
+            .addAllAssets(assets.stream().map(assetDtoMapper::toDto).toList())
+            .build();
 
     responseObserver.onNext(response);
     responseObserver.onCompleted();
@@ -62,7 +68,12 @@ public class AssetsGrpcController
       tech.maze.dtos.assets.requests.BlacklistRequest request,
       StreamObserver<tech.maze.dtos.assets.requests.BlacklistResponse> responseObserver
   ) {
-    responseObserver.onNext(tech.maze.dtos.assets.requests.BlacklistResponse.newBuilder().build());
+    java.util.UUID id = findOneAssetRequestMapper.extractIdFromCriterionRequest(request);
+    blacklistAssetUseCase.blacklist(id);
+
+    tech.maze.dtos.assets.requests.BlacklistResponse response =
+        tech.maze.dtos.assets.requests.BlacklistResponse.newBuilder().build();
+    responseObserver.onNext(response);
     responseObserver.onCompleted();
   }
 
@@ -71,7 +82,12 @@ public class AssetsGrpcController
       tech.maze.dtos.assets.requests.WhitelistRequest request,
       StreamObserver<tech.maze.dtos.assets.requests.WhitelistResponse> responseObserver
   ) {
-    responseObserver.onNext(tech.maze.dtos.assets.requests.WhitelistResponse.newBuilder().build());
+    java.util.UUID id = findOneAssetRequestMapper.extractIdFromCriterionRequest(request);
+    whitelistAssetUseCase.whitelist(id);
+
+    tech.maze.dtos.assets.requests.WhitelistResponse response =
+        tech.maze.dtos.assets.requests.WhitelistResponse.newBuilder().build();
+    responseObserver.onNext(response);
     responseObserver.onCompleted();
   }
 }

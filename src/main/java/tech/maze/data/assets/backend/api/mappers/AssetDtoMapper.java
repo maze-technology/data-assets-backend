@@ -33,6 +33,9 @@ public class AssetDtoMapper {
     if (asset.createdAt() != null) {
       setIfPresent(builder, "createdAt", toTimestamp(asset.createdAt()));
     }
+    if (asset.blacklisted() != null) {
+      setIfPresent(builder, "blacklisted", asset.blacklisted());
+    }
 
     return builder.build();
   }
@@ -52,20 +55,23 @@ public class AssetDtoMapper {
   }
 
   private static void setIfPresent(Message.Builder builder, String fieldName, Object value) {
-    final var field = builder.getDescriptorForType().findFieldByName(fieldName);
+    com.google.protobuf.Descriptors.FieldDescriptor field =
+        builder.getDescriptorForType().findFieldByName(fieldName);
     if (field != null && value != null) {
       builder.setField(field, value);
     }
   }
 
   private static void setEnumIfPresent(Message.Builder builder, String fieldName, String enumName) {
-    final var field = builder.getDescriptorForType().findFieldByName(fieldName);
+    com.google.protobuf.Descriptors.FieldDescriptor field =
+        builder.getDescriptorForType().findFieldByName(fieldName);
     if (field == null || enumName == null || !field.getJavaType().equals(
         com.google.protobuf.Descriptors.FieldDescriptor.JavaType.ENUM)) {
       return;
     }
 
-    final var value = field.getEnumType().findValueByName(enumName);
+    com.google.protobuf.Descriptors.EnumValueDescriptor value =
+        field.getEnumType().findValueByName(enumName);
     if (value != null) {
       builder.setField(field, value);
     }

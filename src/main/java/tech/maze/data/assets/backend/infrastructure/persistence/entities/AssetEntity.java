@@ -34,4 +34,7 @@ public class AssetEntity {
 
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
+
+  @Column(name = "blacklisted", nullable = false)
+  private Boolean blacklisted;
 }

@@ -14,6 +14,13 @@ public class FindOneAssetRequestMapper {
    * Extracts an asset id from a FindOne request criterion if present.
    */
   public UUID toId(tech.maze.dtos.assets.requests.FindOneRequest request) {
+    return extractIdFromCriterionRequest(request);
+  }
+
+  /**
+   * Extracts an asset id from a request that contains a criterion field.
+   */
+  public UUID extractIdFromCriterionRequest(Message request) {
     if (request == null) {
       return null;
     }
@@ -48,7 +55,8 @@ public class FindOneAssetRequestMapper {
   }
 
   private static Object getField(Message message, String fieldName) {
-    final var field = message.getDescriptorForType().findFieldByName(fieldName);
+    com.google.protobuf.Descriptors.FieldDescriptor field =
+        message.getDescriptorForType().findFieldByName(fieldName);
     if (field == null) {
       return null;
     }
