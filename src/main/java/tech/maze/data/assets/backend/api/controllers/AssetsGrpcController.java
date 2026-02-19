@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import tech.maze.data.assets.backend.api.mappers.AssetDtoMapper;
-import tech.maze.data.assets.backend.api.mappers.FindOneAssetRequestMapper;
+import tech.maze.data.assets.backend.api.support.CriterionRequestIdExtractor;
 import tech.maze.data.assets.backend.domain.models.Asset;
 import tech.maze.data.assets.backend.domain.ports.in.BlacklistAssetUseCase;
 import tech.maze.data.assets.backend.domain.ports.in.FindAssetUseCase;
@@ -24,7 +24,7 @@ public class AssetsGrpcController
     extends tech.maze.dtos.assets.controllers.AssetsGRPCGrpc.AssetsGRPCImplBase {
   FindAssetUseCase findAssetUseCase;
   SearchAssetsUseCase searchAssetsUseCase;
-  FindOneAssetRequestMapper findOneAssetRequestMapper;
+  CriterionRequestIdExtractor criterionRequestIdExtractor;
   AssetDtoMapper assetDtoMapper;
   BlacklistAssetUseCase blacklistAssetUseCase;
   WhitelistAssetUseCase whitelistAssetUseCase;
@@ -36,7 +36,7 @@ public class AssetsGrpcController
   ) {
     tech.maze.dtos.assets.requests.FindOneResponse.Builder responseBuilder =
         tech.maze.dtos.assets.requests.FindOneResponse.newBuilder();
-    java.util.UUID id = findOneAssetRequestMapper.toId(request);
+    java.util.UUID id = criterionRequestIdExtractor.extractId(request);
 
     if (id != null) {
       findAssetUseCase.findById(id)
@@ -68,7 +68,7 @@ public class AssetsGrpcController
       tech.maze.dtos.assets.requests.BlacklistRequest request,
       StreamObserver<tech.maze.dtos.assets.requests.BlacklistResponse> responseObserver
   ) {
-    java.util.UUID id = findOneAssetRequestMapper.extractIdFromCriterionRequest(request);
+    java.util.UUID id = criterionRequestIdExtractor.extractId(request);
     blacklistAssetUseCase.blacklist(id);
 
     tech.maze.dtos.assets.requests.BlacklistResponse response =
@@ -82,7 +82,7 @@ public class AssetsGrpcController
       tech.maze.dtos.assets.requests.WhitelistRequest request,
       StreamObserver<tech.maze.dtos.assets.requests.WhitelistResponse> responseObserver
   ) {
-    java.util.UUID id = findOneAssetRequestMapper.extractIdFromCriterionRequest(request);
+    java.util.UUID id = criterionRequestIdExtractor.extractId(request);
     whitelistAssetUseCase.whitelist(id);
 
     tech.maze.dtos.assets.requests.WhitelistResponse response =
