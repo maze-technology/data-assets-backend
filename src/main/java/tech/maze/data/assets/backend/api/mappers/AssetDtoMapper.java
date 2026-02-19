@@ -34,6 +34,9 @@ public interface AssetDtoMapper {
   @Mapping(target = "primaryClass", source = "primaryClass", qualifiedByName = "primaryClassToDto")
   tech.maze.dtos.assets.models.Asset toDto(Asset asset);
 
+  /**
+   * Converts UUID values to protobuf {@link Value} wrappers.
+   */
   @Named("uuidToValue")
   default Value uuidToValue(UUID value) {
     if (value == null) {
@@ -42,6 +45,9 @@ public interface AssetDtoMapper {
     return Value.newBuilder().setStringValue(value.toString()).build();
   }
 
+  /**
+   * Converts domain primary class values to DTO enum values.
+   */
   @Named("primaryClassToDto")
   default tech.maze.dtos.assets.enums.PrimaryClass primaryClassToDto(PrimaryClass value) {
     if (value == null) {
