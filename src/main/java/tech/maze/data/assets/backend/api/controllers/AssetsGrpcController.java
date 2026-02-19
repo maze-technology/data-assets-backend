@@ -7,10 +7,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import tech.maze.data.assets.backend.api.mappers.AssetDtoMapper;
+import tech.maze.data.assets.backend.api.search.FindOneAssetSearchStrategyHandler;
 import tech.maze.data.assets.backend.api.support.CriterionRequestIdExtractor;
 import tech.maze.data.assets.backend.domain.models.Asset;
 import tech.maze.data.assets.backend.domain.ports.in.BlacklistAssetUseCase;
-import tech.maze.data.assets.backend.domain.ports.in.FindAssetUseCase;
 import tech.maze.data.assets.backend.domain.ports.in.SearchAssetsUseCase;
 import tech.maze.data.assets.backend.domain.ports.in.WhitelistAssetUseCase;
 
@@ -22,7 +22,7 @@ import tech.maze.data.assets.backend.domain.ports.in.WhitelistAssetUseCase;
 @FieldDefaults(makeFinal = true, level = AccessLevel.PRIVATE)
 public class AssetsGrpcController
     extends tech.maze.dtos.assets.controllers.AssetsGRPCGrpc.AssetsGRPCImplBase {
-  FindAssetUseCase findAssetUseCase;
+  FindOneAssetSearchStrategyHandler findOneAssetSearchStrategyHandler;
   SearchAssetsUseCase searchAssetsUseCase;
   CriterionRequestIdExtractor criterionRequestIdExtractor;
   AssetDtoMapper assetDtoMapper;
@@ -36,10 +36,8 @@ public class AssetsGrpcController
   ) {
     tech.maze.dtos.assets.requests.FindOneResponse.Builder responseBuilder =
         tech.maze.dtos.assets.requests.FindOneResponse.newBuilder();
-    java.util.UUID id = criterionRequestIdExtractor.extractId(request);
-
-    if (id != null) {
-      findAssetUseCase.findById(id)
+    if (request.hasCriterion()) {
+      findOneAssetSearchStrategyHandler.handleSearch(request.getCriterion())
           .map(assetDtoMapper::toDto)
           .ifPresent(responseBuilder::setAsset);
     }
