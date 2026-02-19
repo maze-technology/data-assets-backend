@@ -1,0 +1,34 @@
+package tech.maze.data.assets.backend.domain.usecases;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import tech.maze.data.assets.backend.domain.models.Asset;
+import tech.maze.data.assets.backend.domain.ports.out.LoadAssetPort;
+
+@ExtendWith(MockitoExtension.class)
+class FindAssetServiceTest {
+  @Mock
+  private LoadAssetPort loadAssetPort;
+  @Mock
+  private Asset asset;
+
+  @Test
+  void delegatesFindById() {
+    final UUID id = UUID.randomUUID();
+    when(loadAssetPort.findById(id)).thenReturn(Optional.of(asset));
+
+    final var service = new FindAssetService(loadAssetPort);
+    final var result = service.findById(id);
+
+    assertThat(result).contains(asset);
+    verify(loadAssetPort).findById(id);
+  }
+}

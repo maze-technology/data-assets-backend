@@ -259,6 +259,8 @@ tasks.named("jacocoTestReport") {
 }
 
 jacocoTestCoverageVerification {
+  dependsOn test
+
   violationRules {
     rule {
       limit {
@@ -308,6 +310,10 @@ testing {
 
 tasks.withType(Javadoc).configureEach {
   options.addStringOption('Xdoclint:none', '-quiet')
+}
+
+tasks.named("test") {
+  outputs.upToDateWhen { false }
 }
 
 tasks.named("checkstyleMain", Checkstyle) {

@@ -4,8 +4,8 @@ build:
 test:
 	@./gradlew test
 
-test-coverage-verification: test
-	@./gradlew jacocoTestCoverageVerification
+test-coverage-verification:
+	@./gradlew test jacocoTestCoverageVerification --rerun-tasks
 
 spotbugs:
 	@./gradlew spotbugsMain spotbugsTest spotbugsIntegrationTest
