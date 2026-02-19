@@ -20,7 +20,7 @@ ext {
   postgresqlVersion           = "42.7.10"
   springBootVersion           = "4.0.2"
   mazeCommonsVersion          = "0.0.14"
-  mazeDtosAssetsVersion   = "0.0.2"
+  mazeDtosAssetsVersion   = "0.0.4"
   protobufJavaVersion         = "4.33.5"
   grpcSpringBootVersion       = "1.0.2"
   testContainersVersion       = "2.0.3"
@@ -47,7 +47,7 @@ repositories {
   }
 
   maven {
-    url "https://maven.pkg.github.com/maze-technology/tech.maze.commons"
+    url "https://maven.pkg.github.com/maze-technology/data-assets-specs"
 
     // INFO: Pulling from GitHub Packages (even public ones) requires a personal access token
     // https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token
@@ -58,7 +58,7 @@ repositories {
   }
 
   maven {
-    url "https://maven.pkg.github.com/maze-technology/data-assets-specs"
+    url "https://maven.pkg.github.com/maze-technology/tech.maze.commons"
 
     // INFO: Pulling from GitHub Packages (even public ones) requires a personal access token
     // https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token

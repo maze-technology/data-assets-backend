@@ -58,9 +58,7 @@ class AssetsEventStreamConfigurationTest {
         .withId("evt-fetch")
         .withSource(URI.create("urn:test"))
         .withType(tech.maze.dtos.assets.events.EventTypes.FETCH_ASSETS_REQUEST)
-        .withData(BytesCloudEventData.wrap(
-            tech.maze.dtos.assets.payloads.FetchAssetsRequest.newBuilder().build().toByteArray()
-        ))
+        .withData(BytesCloudEventData.wrap(com.google.protobuf.Empty.getDefaultInstance().toByteArray()))
         .build();
 
     when(eventSender.resolveReplyTo(event)).thenReturn("reply-topic");
@@ -78,9 +76,7 @@ class AssetsEventStreamConfigurationTest {
         .withId("evt-sync")
         .withSource(URI.create("urn:test"))
         .withType(tech.maze.dtos.assets.events.EventTypes.SYNC_ASSETS_REQUEST)
-        .withData(BytesCloudEventData.wrap(
-            tech.maze.dtos.assets.payloads.SyncAssetsRequest.newBuilder().build().toByteArray()
-        ))
+        .withData(BytesCloudEventData.wrap(com.google.protobuf.Empty.getDefaultInstance().toByteArray()))
         .build();
 
     when(eventSender.resolveReplyTo(event)).thenReturn("reply-topic");

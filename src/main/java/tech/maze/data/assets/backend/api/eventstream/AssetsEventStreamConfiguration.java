@@ -1,8 +1,7 @@
 package tech.maze.data.assets.backend.api.eventstream;
 
-import com.google.protobuf.InvalidProtocolBufferException;
+import com.google.protobuf.Empty;
 import io.cloudevents.CloudEvent;
-import io.cloudevents.CloudEventData;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
@@ -45,14 +44,7 @@ public class AssetsEventStreamConfiguration {
         return;
       }
 
-      parseFetchRequest(event);
-      final var response = tech.maze.dtos.assets.payloads.FetchAssetsResponse.newBuilder()
-          .setSourceRequest(tech.maze.dtos.assets.payloads.FetchAssetsRequest.newBuilder().build())
-          .setKey("")
-          .setIsLast(true)
-          .setSkipped(0)
-          .build();
-      sendReply(event, response, tech.maze.dtos.assets.events.EventTypes.FETCH_ASSETS_REQUEST);
+      sendReply(event, Empty.getDefaultInstance(), tech.maze.dtos.assets.events.EventTypes.FETCH_ASSETS_REQUEST);
     };
   }
 
@@ -73,11 +65,7 @@ public class AssetsEventStreamConfiguration {
         return;
       }
 
-      parseSyncRequest(event);
-      final var response = tech.maze.dtos.assets.payloads.SyncAssetsResponse.newBuilder()
-          .setSkipped(0)
-          .build();
-      sendReply(event, response, tech.maze.dtos.assets.events.EventTypes.SYNC_ASSETS_REQUEST);
+      sendReply(event, Empty.getDefaultInstance(), tech.maze.dtos.assets.events.EventTypes.SYNC_ASSETS_REQUEST);
     };
   }
 
@@ -97,27 +85,4 @@ public class AssetsEventStreamConfiguration {
     }
   }
 
-  private static tech.maze.dtos.assets.payloads.FetchAssetsRequest parseFetchRequest(CloudEvent event) {
-    try {
-      return tech.maze.dtos.assets.payloads.FetchAssetsRequest.parseFrom(extractBytes(event));
-    } catch (InvalidProtocolBufferException ex) {
-      throw new IllegalArgumentException("Failed to decode FetchAssetsRequest payload", ex);
-    }
-  }
-
-  private static tech.maze.dtos.assets.payloads.SyncAssetsRequest parseSyncRequest(CloudEvent event) {
-    try {
-      return tech.maze.dtos.assets.payloads.SyncAssetsRequest.parseFrom(extractBytes(event));
-    } catch (InvalidProtocolBufferException ex) {
-      throw new IllegalArgumentException("Failed to decode SyncAssetsRequest payload", ex);
-    }
-  }
-
-  private static byte[] extractBytes(CloudEvent event) {
-    final CloudEventData data = event.getData();
-    if (data == null) {
-      throw new IllegalArgumentException("CloudEvent has no data");
-    }
-    return data.toBytes();
-  }
 }
