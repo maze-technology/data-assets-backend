@@ -1,10 +1,9 @@
 package tech.maze.data.assets.backend.api.search;
 
-import com.google.protobuf.Value;
 import java.util.Optional;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import tech.maze.data.assets.backend.api.support.CriterionValueExtractor;
 import tech.maze.data.assets.backend.domain.models.Asset;
 import tech.maze.data.assets.backend.domain.ports.in.FindAssetUseCase;
 import tech.maze.dtos.assets.search.Criterion;
@@ -14,8 +13,9 @@ import tech.maze.dtos.assets.search.Criterion;
  */
 @Service
 @RequiredArgsConstructor
-public class ByIdFindOneAssetSearchStrategy implements FindOneAssetSearchStrategy {
+public class FindOneAssetByIdSearchStrategy implements FindOneAssetSearchStrategy {
   private final FindAssetUseCase findAssetUseCase;
+  private final CriterionValueExtractor criterionValueExtractor;
 
   @Override
   public boolean supports(Criterion criterion) {
@@ -27,12 +27,7 @@ public class ByIdFindOneAssetSearchStrategy implements FindOneAssetSearchStrateg
 
   @Override
   public Optional<Asset> search(Criterion criterion) {
-    Value value = criterion.getFilter().getById();
-    try {
-      UUID id = UUID.fromString(value.getStringValue());
-      return findAssetUseCase.findById(id);
-    } catch (IllegalArgumentException ex) {
-      return Optional.empty();
-    }
+    return criterionValueExtractor.extractUuid(criterion.getFilter().getById())
+        .flatMap(findAssetUseCase::findById);
   }
 }

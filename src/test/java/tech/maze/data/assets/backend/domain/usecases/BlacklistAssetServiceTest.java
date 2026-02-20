@@ -20,7 +20,7 @@ import tech.maze.data.assets.backend.domain.ports.out.LoadAssetPort;
 import tech.maze.data.assets.backend.domain.ports.out.SaveAssetPort;
 
 @ExtendWith(MockitoExtension.class)
-class BlacklistAssetServiceTest {
+class BlacklistAssetUseCaseImplTest {
   @Mock
   private LoadAssetPort loadAssetPort;
   @Mock
@@ -32,7 +32,7 @@ class BlacklistAssetServiceTest {
     final Asset asset = new Asset(id, "BTC", "Bitcoin", PrimaryClass.CRYPTO, Instant.now(), false);
     when(loadAssetPort.findById(id)).thenReturn(Optional.of(asset));
 
-    final var service = new BlacklistAssetService(loadAssetPort, saveAssetPort);
+    final var service = new BlacklistAssetUseCaseImpl(loadAssetPort, saveAssetPort);
     service.blacklist(id);
 
     final ArgumentCaptor<Asset> captor = ArgumentCaptor.forClass(Asset.class);
@@ -42,7 +42,7 @@ class BlacklistAssetServiceTest {
 
   @Test
   void doesNothingWhenIdIsNull() {
-    final var service = new BlacklistAssetService(loadAssetPort, saveAssetPort);
+    final var service = new BlacklistAssetUseCaseImpl(loadAssetPort, saveAssetPort);
     service.blacklist(null);
 
     verify(loadAssetPort, never()).findById(any());

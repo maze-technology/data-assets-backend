@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tech.maze.data.assets.backend.domain.models.Asset;
+import tech.maze.data.assets.backend.domain.models.PrimaryClass;
 import tech.maze.data.assets.backend.infrastructure.persistence.entities.AssetEntity;
 import tech.maze.data.assets.backend.infrastructure.persistence.mappers.AssetEntityMapper;
 import tech.maze.data.assets.backend.infrastructure.persistence.repositories.AssetJpaRepository;
@@ -51,6 +52,47 @@ class AssetPersistenceAdapterTest {
 
     assertThat(result).containsExactly(asset);
     verify(assetJpaRepository).findAll();
+  }
+
+  @Test
+  void findByDataProviderIdsReturnsEmptyWhenInputIsEmpty() {
+    final var adapter = new AssetPersistenceAdapter(assetJpaRepository, assetEntityMapper);
+
+    final var result = adapter.findByDataProviderIds(List.of());
+
+    assertThat(result).isEmpty();
+  }
+
+  @Test
+  void findByDataProviderIdsDelegatesToRepository() {
+    final UUID dataProviderId = UUID.randomUUID();
+    when(assetJpaRepository.findAllByDataProviderIds(List.of(dataProviderId.toString()))).thenReturn(List.of(entity));
+    when(assetEntityMapper.toDomain(entity)).thenReturn(asset);
+
+    final var adapter = new AssetPersistenceAdapter(assetJpaRepository, assetEntityMapper);
+    final var result = adapter.findByDataProviderIds(List.of(dataProviderId));
+
+    assertThat(result).containsExactly(asset);
+    verify(assetJpaRepository).findAllByDataProviderIds(List.of(dataProviderId.toString()));
+  }
+
+  @Test
+  void findBySymbolIgnoreCaseAndNameIgnoreCaseAndPrimaryClassDelegatesToRepository() {
+    when(assetJpaRepository.findFirstBySymbolIgnoreCaseAndNameIgnoreCaseAndPrimaryClass(
+        "BTC",
+        "Bitcoin",
+        PrimaryClass.CRYPTO
+    )).thenReturn(Optional.of(entity));
+    when(assetEntityMapper.toDomain(entity)).thenReturn(asset);
+
+    final var adapter = new AssetPersistenceAdapter(assetJpaRepository, assetEntityMapper);
+    final var result = adapter.findBySymbolIgnoreCaseAndNameIgnoreCaseAndPrimaryClass(
+        "BTC",
+        "Bitcoin",
+        PrimaryClass.CRYPTO
+    );
+
+    assertThat(result).contains(asset);
   }
 
   @Test

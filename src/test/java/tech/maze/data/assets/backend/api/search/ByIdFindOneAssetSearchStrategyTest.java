@@ -12,11 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import tech.maze.data.assets.backend.api.support.CriterionValueExtractor;
 import tech.maze.data.assets.backend.domain.models.Asset;
 import tech.maze.data.assets.backend.domain.ports.in.FindAssetUseCase;
 
 @ExtendWith(MockitoExtension.class)
-class ByIdFindOneAssetSearchStrategyTest {
+class FindOneAssetByIdSearchStrategyTest {
   @Mock
   private FindAssetUseCase findAssetUseCase;
   @Mock
@@ -24,7 +25,7 @@ class ByIdFindOneAssetSearchStrategyTest {
 
   @Test
   void supportsOnlyCriterionWithByIdStringValue() {
-    final var strategy = new ByIdFindOneAssetSearchStrategy(findAssetUseCase);
+    final var strategy = new FindOneAssetByIdSearchStrategy(findAssetUseCase, new CriterionValueExtractor());
     final var valid = criterionWithId(UUID.randomUUID().toString());
 
     assertThat(strategy.supports(valid)).isTrue();
@@ -34,7 +35,7 @@ class ByIdFindOneAssetSearchStrategyTest {
 
   @Test
   void searchDelegatesToFindUseCaseForValidUuid() {
-    final var strategy = new ByIdFindOneAssetSearchStrategy(findAssetUseCase);
+    final var strategy = new FindOneAssetByIdSearchStrategy(findAssetUseCase, new CriterionValueExtractor());
     final UUID id = UUID.randomUUID();
     final var criterion = criterionWithId(id.toString());
     when(findAssetUseCase.findById(id)).thenReturn(Optional.of(asset));
@@ -47,7 +48,7 @@ class ByIdFindOneAssetSearchStrategyTest {
 
   @Test
   void searchReturnsEmptyWhenUuidIsInvalid() {
-    final var strategy = new ByIdFindOneAssetSearchStrategy(findAssetUseCase);
+    final var strategy = new FindOneAssetByIdSearchStrategy(findAssetUseCase, new CriterionValueExtractor());
 
     final var result = strategy.search(criterionWithId("not-a-uuid"));
 

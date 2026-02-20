@@ -9,11 +9,11 @@ import tech.maze.data.assets.backend.domain.ports.out.LoadAssetPort;
 import tech.maze.data.assets.backend.domain.ports.out.SaveAssetPort;
 
 /**
- * Service implementing asset blacklist use case.
+ * Blacklist asset use case implementation.
  */
 @Service
 @RequiredArgsConstructor
-public class BlacklistAssetService implements BlacklistAssetUseCase {
+public class BlacklistAssetUseCaseImpl implements BlacklistAssetUseCase {
   private final LoadAssetPort loadAssetPort;
   private final SaveAssetPort saveAssetPort;
 

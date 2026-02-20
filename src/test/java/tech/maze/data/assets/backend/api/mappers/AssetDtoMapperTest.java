@@ -3,35 +3,32 @@ package tech.maze.data.assets.backend.api.mappers;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.google.protobuf.Value;
-import java.util.UUID;
 import org.junit.jupiter.api.Test;
-import tech.maze.data.assets.backend.domain.models.Asset;
+import org.mapstruct.factory.Mappers;
 import tech.maze.data.assets.backend.domain.models.PrimaryClass;
 
 class AssetDtoMapperTest {
-  private final AssetDtoMapper mapper = new AssetDtoMapper() {
-    @Override
-    public tech.maze.dtos.assets.models.Asset toDto(Asset asset) {
-      return null;
-    }
-  };
+  private final PrimaryClassDtoMapper primaryClassDtoMapper = new PrimaryClassDtoMapper();
+  private final DocumentValueDtoMapper documentValueDtoMapper = new DocumentValueDtoMapper(
+      Mappers.getMapper(tech.maze.commons.mappers.UuidMapper.class)
+  );
 
   @Test
   void uuidToValueReturnsDefaultForNull() {
-    assertThat(mapper.uuidToValue(null)).isEqualTo(Value.getDefaultInstance());
+    assertThat(documentValueDtoMapper.uuidToValue(null)).isEqualTo(Value.getDefaultInstance());
   }
 
   @Test
   void uuidToValueReturnsStringValueForUuid() {
-    final UUID id = UUID.randomUUID();
+    final java.util.UUID id = java.util.UUID.randomUUID();
 
-    assertThat(mapper.uuidToValue(id).getStringValue()).isEqualTo(id.toString());
+    assertThat(documentValueDtoMapper.uuidToValue(id).getStringValue()).isEqualTo(id.toString());
   }
 
   @Test
   void primaryClassToDtoHandlesNullAndKnownValues() {
-    assertThat(mapper.primaryClassToDto(null)).isEqualTo(tech.maze.dtos.assets.enums.PrimaryClass.UNRECOGNIZED);
-    assertThat(mapper.primaryClassToDto(PrimaryClass.FIAT)).isEqualTo(tech.maze.dtos.assets.enums.PrimaryClass.FIAT);
-    assertThat(mapper.primaryClassToDto(PrimaryClass.CRYPTO)).isEqualTo(tech.maze.dtos.assets.enums.PrimaryClass.CRYPTO);
+    assertThat(primaryClassDtoMapper.toDto(null)).isEqualTo(tech.maze.dtos.assets.enums.PrimaryClass.UNRECOGNIZED);
+    assertThat(primaryClassDtoMapper.toDto(PrimaryClass.FIAT)).isEqualTo(tech.maze.dtos.assets.enums.PrimaryClass.FIAT);
+    assertThat(primaryClassDtoMapper.toDto(PrimaryClass.CRYPTO)).isEqualTo(tech.maze.dtos.assets.enums.PrimaryClass.CRYPTO);
   }
 }

@@ -18,7 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tech.maze.data.assets.backend.api.mappers.AssetDtoMapper;
 import tech.maze.data.assets.backend.api.search.FindOneAssetSearchStrategyHandler;
-import tech.maze.data.assets.backend.api.support.CriterionRequestIdExtractor;
+import tech.maze.data.assets.backend.api.support.CriterionValueExtractor;
 import tech.maze.data.assets.backend.domain.models.Asset;
 import tech.maze.data.assets.backend.domain.models.PrimaryClass;
 import tech.maze.data.assets.backend.domain.ports.in.BlacklistAssetUseCase;
@@ -32,7 +32,7 @@ class AssetsGrpcControllerTest {
   @Mock
   private SearchAssetsUseCase searchAssetsUseCase;
   @Mock
-  private CriterionRequestIdExtractor criterionRequestIdExtractor;
+  private CriterionValueExtractor criterionValueExtractor;
   @Mock
   private AssetDtoMapper assetDtoMapper;
   @Mock
@@ -54,7 +54,7 @@ class AssetsGrpcControllerTest {
     final var controller = new AssetsGrpcController(
         findOneAssetSearchStrategyHandler,
         searchAssetsUseCase,
-        criterionRequestIdExtractor,
+        criterionValueExtractor,
         assetDtoMapper,
         blacklistAssetUseCase,
         whitelistAssetUseCase
@@ -92,7 +92,7 @@ class AssetsGrpcControllerTest {
     final var controller = new AssetsGrpcController(
         findOneAssetSearchStrategyHandler,
         searchAssetsUseCase,
-        criterionRequestIdExtractor,
+        criterionValueExtractor,
         assetDtoMapper,
         blacklistAssetUseCase,
         whitelistAssetUseCase
@@ -114,7 +114,7 @@ class AssetsGrpcControllerTest {
     final var controller = new AssetsGrpcController(
         findOneAssetSearchStrategyHandler,
         searchAssetsUseCase,
-        criterionRequestIdExtractor,
+        criterionValueExtractor,
         assetDtoMapper,
         blacklistAssetUseCase,
         whitelistAssetUseCase
@@ -124,61 +124,87 @@ class AssetsGrpcControllerTest {
     final var dtoA = tech.maze.dtos.assets.models.Asset.newBuilder().setSymbol("BTC").build();
     final var dtoB = tech.maze.dtos.assets.models.Asset.newBuilder().setSymbol("EUR").build();
 
-    when(searchAssetsUseCase.findAll()).thenReturn(List.of(assetA, assetB));
+    final UUID dataProviderA = UUID.randomUUID();
+    final UUID dataProviderB = UUID.randomUUID();
+    final var request = tech.maze.dtos.assets.requests.FindByDataProvidersRequest.newBuilder()
+        .addDataProviders(Value.newBuilder().setStringValue(dataProviderA.toString()).build())
+        .addDataProviders(Value.newBuilder().setStringValue(dataProviderB.toString()).build())
+        .build();
+    when(criterionValueExtractor.extractUuids(request.getDataProvidersList())).thenReturn(List.of(dataProviderA, dataProviderB));
+    when(searchAssetsUseCase.findByDataProviderIds(List.of(dataProviderA, dataProviderB))).thenReturn(List.of(assetA, assetB));
     when(assetDtoMapper.toDto(assetA)).thenReturn(dtoA);
     when(assetDtoMapper.toDto(assetB)).thenReturn(dtoB);
 
-    controller.findByDataProviders(
-        tech.maze.dtos.assets.requests.FindByDataProvidersRequest.newBuilder().build(),
-        findByProvidersObserver
-    );
+    controller.findByDataProviders(request, findByProvidersObserver);
 
     final ArgumentCaptor<tech.maze.dtos.assets.requests.FindByDataProvidersResponse> captor =
         ArgumentCaptor.forClass(tech.maze.dtos.assets.requests.FindByDataProvidersResponse.class);
     verify(findByProvidersObserver).onNext(captor.capture());
     verify(findByProvidersObserver).onCompleted();
+    verify(criterionValueExtractor).extractUuids(request.getDataProvidersList());
+    verify(searchAssetsUseCase).findByDataProviderIds(List.of(dataProviderA, dataProviderB));
     assertThat(captor.getValue().getAssetsList()).containsExactly(dtoA, dtoB);
   }
 
   @Test
-  void blacklistDelegatesToUseCase() {
+  void blacklistDelegatesToUseCaseWhenCriterionResolvesAsset() {
     final var controller = new AssetsGrpcController(
         findOneAssetSearchStrategyHandler,
         searchAssetsUseCase,
-        criterionRequestIdExtractor,
+        criterionValueExtractor,
         assetDtoMapper,
         blacklistAssetUseCase,
         whitelistAssetUseCase
     );
     final UUID id = UUID.randomUUID();
-    final var request = tech.maze.dtos.assets.requests.BlacklistRequest.newBuilder().build();
-    when(criterionRequestIdExtractor.extractId(request)).thenReturn(id);
+    final var criterion = tech.maze.dtos.assets.search.Criterion.newBuilder()
+        .setFilter(
+            tech.maze.dtos.assets.search.CriterionFilter.newBuilder()
+                .setById(Value.newBuilder().setStringValue(id.toString()).build())
+                .build()
+        )
+        .build();
+    final var request = tech.maze.dtos.assets.requests.BlacklistRequest.newBuilder()
+        .setCriterion(criterion)
+        .build();
+    when(findOneAssetSearchStrategyHandler.handleSearch(criterion))
+        .thenReturn(Optional.of(new Asset(id, "BTC", "Bitcoin", PrimaryClass.CRYPTO, Instant.now(), false)));
 
     controller.blacklist(request, blacklistObserver);
 
-    verify(criterionRequestIdExtractor).extractId(request);
+    verify(findOneAssetSearchStrategyHandler).handleSearch(criterion);
     verify(blacklistAssetUseCase).blacklist(id);
     verify(blacklistObserver).onNext(tech.maze.dtos.assets.requests.BlacklistResponse.getDefaultInstance());
     verify(blacklistObserver).onCompleted();
   }
 
   @Test
-  void whitelistDelegatesToUseCase() {
+  void whitelistDelegatesToUseCaseWhenCriterionResolvesAsset() {
     final var controller = new AssetsGrpcController(
         findOneAssetSearchStrategyHandler,
         searchAssetsUseCase,
-        criterionRequestIdExtractor,
+        criterionValueExtractor,
         assetDtoMapper,
         blacklistAssetUseCase,
         whitelistAssetUseCase
     );
     final UUID id = UUID.randomUUID();
-    final var request = tech.maze.dtos.assets.requests.WhitelistRequest.newBuilder().build();
-    when(criterionRequestIdExtractor.extractId(request)).thenReturn(id);
+    final var criterion = tech.maze.dtos.assets.search.Criterion.newBuilder()
+        .setFilter(
+            tech.maze.dtos.assets.search.CriterionFilter.newBuilder()
+                .setById(Value.newBuilder().setStringValue(id.toString()).build())
+                .build()
+        )
+        .build();
+    final var request = tech.maze.dtos.assets.requests.WhitelistRequest.newBuilder()
+        .setCriterion(criterion)
+        .build();
+    when(findOneAssetSearchStrategyHandler.handleSearch(criterion))
+        .thenReturn(Optional.of(new Asset(id, "BTC", "Bitcoin", PrimaryClass.CRYPTO, Instant.now(), true)));
 
     controller.whitelist(request, whitelistObserver);
 
-    verify(criterionRequestIdExtractor).extractId(request);
+    verify(findOneAssetSearchStrategyHandler).handleSearch(criterion);
     verify(whitelistAssetUseCase).whitelist(id);
     verify(whitelistObserver).onNext(tech.maze.dtos.assets.requests.WhitelistResponse.getDefaultInstance());
     verify(whitelistObserver).onCompleted();

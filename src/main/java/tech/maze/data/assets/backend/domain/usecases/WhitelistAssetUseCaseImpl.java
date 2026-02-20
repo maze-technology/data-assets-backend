@@ -9,11 +9,11 @@ import tech.maze.data.assets.backend.domain.ports.out.LoadAssetPort;
 import tech.maze.data.assets.backend.domain.ports.out.SaveAssetPort;
 
 /**
- * Service implementing asset whitelist use case.
+ * Whitelist asset use case implementation.
  */
 @Service
 @RequiredArgsConstructor
-public class WhitelistAssetService implements WhitelistAssetUseCase {
+public class WhitelistAssetUseCaseImpl implements WhitelistAssetUseCase {
   private final LoadAssetPort loadAssetPort;
   private final SaveAssetPort saveAssetPort;
 
