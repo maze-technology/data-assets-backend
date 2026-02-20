@@ -14,7 +14,7 @@ import tech.maze.data.assets.backend.domain.models.Asset;
 import tech.maze.data.assets.backend.domain.ports.out.SearchAssetsPort;
 
 @ExtendWith(MockitoExtension.class)
-class SearchAssetsServiceTest {
+class SearchAssetsUseCaseImplTest {
   @Mock
   private SearchAssetsPort searchAssetsPort;
   @Mock
@@ -24,7 +24,7 @@ class SearchAssetsServiceTest {
   void delegatesFindAll() {
     when(searchAssetsPort.findAll()).thenReturn(List.of(asset));
 
-    final var service = new SearchAssetsService(searchAssetsPort);
+    final var service = new SearchAssetsUseCaseImpl(searchAssetsPort);
     final var result = service.findAll();
 
     assertThat(result).containsExactly(asset);
@@ -36,7 +36,7 @@ class SearchAssetsServiceTest {
     final UUID dataProviderId = UUID.randomUUID();
     when(searchAssetsPort.findByDataProviderIds(List.of(dataProviderId))).thenReturn(List.of(asset));
 
-    final var service = new SearchAssetsService(searchAssetsPort);
+    final var service = new SearchAssetsUseCaseImpl(searchAssetsPort);
     final var result = service.findByDataProviderIds(List.of(dataProviderId));
 
     assertThat(result).containsExactly(asset);

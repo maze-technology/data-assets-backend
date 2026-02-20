@@ -13,7 +13,7 @@ import tech.maze.data.assets.backend.domain.ports.out.SearchAssetsPort;
  */
 @Service
 @RequiredArgsConstructor
-public class SearchAssetsService implements SearchAssetsUseCase {
+public class SearchAssetsUseCaseImpl implements SearchAssetsUseCase {
   private final SearchAssetsPort searchAssetsPort;
 
   @Override

@@ -14,7 +14,7 @@ import tech.maze.data.assets.backend.domain.ports.out.LoadAssetPort;
  */
 @Service
 @RequiredArgsConstructor
-public class FindAssetService implements FindAssetUseCase {
+public class FindAssetUseCaseImpl implements FindAssetUseCase {
   private final LoadAssetPort loadAssetPort;
 
   @Override

@@ -15,7 +15,7 @@ import tech.maze.data.assets.backend.domain.models.PrimaryClass;
 import tech.maze.data.assets.backend.domain.ports.out.LoadAssetPort;
 
 @ExtendWith(MockitoExtension.class)
-class FindAssetServiceTest {
+class FindAssetUseCaseImplTest {
   @Mock
   private LoadAssetPort loadAssetPort;
   @Mock
@@ -26,7 +26,7 @@ class FindAssetServiceTest {
     final UUID id = UUID.randomUUID();
     when(loadAssetPort.findById(id)).thenReturn(Optional.of(asset));
 
-    final var service = new FindAssetService(loadAssetPort);
+    final var service = new FindAssetUseCaseImpl(loadAssetPort);
     final var result = service.findById(id);
 
     assertThat(result).contains(asset);
@@ -38,7 +38,7 @@ class FindAssetServiceTest {
     when(loadAssetPort.findBySymbolIgnoreCaseAndNameIgnoreCaseAndPrimaryClass("BTC", "Bitcoin", PrimaryClass.CRYPTO))
         .thenReturn(Optional.of(asset));
 
-    final var service = new FindAssetService(loadAssetPort);
+    final var service = new FindAssetUseCaseImpl(loadAssetPort);
     final var result = service.findBySymbolIgnoreCaseAndNameIgnoreCaseAndPrimaryClass(
         "BTC",
         "Bitcoin",
@@ -55,7 +55,7 @@ class FindAssetServiceTest {
     when(loadAssetPort.findByDataProviderIdAndDataProviderMetaDatasAssetId(dataProviderId, "BTC"))
         .thenReturn(Optional.of(asset));
 
-    final var service = new FindAssetService(loadAssetPort);
+    final var service = new FindAssetUseCaseImpl(loadAssetPort);
     final var result = service.findByDataProviderIdAndDataProviderMetaDatasAssetId(dataProviderId, "BTC");
 
     assertThat(result).contains(asset);
@@ -68,7 +68,7 @@ class FindAssetServiceTest {
     when(loadAssetPort.findByDataProviderIdAndDataProviderSymbol(dataProviderId, "BTC"))
         .thenReturn(Optional.of(asset));
 
-    final var service = new FindAssetService(loadAssetPort);
+    final var service = new FindAssetUseCaseImpl(loadAssetPort);
     final var result = service.findByDataProviderIdAndDataProviderSymbol(dataProviderId, "BTC");
 
     assertThat(result).contains(asset);

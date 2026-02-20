@@ -12,7 +12,7 @@ import tech.maze.data.assets.backend.domain.models.Asset;
 import tech.maze.data.assets.backend.domain.ports.out.SaveAssetPort;
 
 @ExtendWith(MockitoExtension.class)
-class SaveAssetServiceTest {
+class SaveAssetUseCaseImplTest {
   @Mock
   private SaveAssetPort saveAssetPort;
   @Mock
@@ -22,7 +22,7 @@ class SaveAssetServiceTest {
   void delegatesSave() {
     when(saveAssetPort.save(asset)).thenReturn(asset);
 
-    final var service = new SaveAssetService(saveAssetPort);
+    final var service = new SaveAssetUseCaseImpl(saveAssetPort);
     final var result = service.save(asset);
 
     assertThat(result).isSameAs(asset);
