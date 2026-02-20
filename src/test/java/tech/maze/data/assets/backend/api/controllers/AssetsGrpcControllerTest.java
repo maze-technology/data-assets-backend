@@ -131,7 +131,8 @@ class AssetsGrpcControllerTest {
         .addDataProviders(Value.newBuilder().setStringValue(dataProviderB.toString()).build())
         .build();
     when(criterionValueExtractor.extractUuids(request.getDataProvidersList())).thenReturn(List.of(dataProviderA, dataProviderB));
-    when(searchAssetsUseCase.findByDataProviderIds(List.of(dataProviderA, dataProviderB))).thenReturn(List.of(assetA, assetB));
+    when(searchAssetsUseCase.findByDataProviderIds(List.of(dataProviderA, dataProviderB)))
+        .thenReturn(List.of(assetA, assetB));
     when(assetDtoMapper.toDto(assetA)).thenReturn(dtoA);
     when(assetDtoMapper.toDto(assetB)).thenReturn(dtoB);
 
@@ -144,6 +145,8 @@ class AssetsGrpcControllerTest {
     verify(criterionValueExtractor).extractUuids(request.getDataProvidersList());
     verify(searchAssetsUseCase).findByDataProviderIds(List.of(dataProviderA, dataProviderB));
     assertThat(captor.getValue().getAssetsList()).containsExactly(dtoA, dtoB);
+    assertThat(captor.getValue().getPaginationInfos().getTotalElements()).isEqualTo(2);
+    assertThat(captor.getValue().getPaginationInfos().getTotalPages()).isEqualTo(1);
   }
 
   @Test
@@ -179,6 +182,36 @@ class AssetsGrpcControllerTest {
   }
 
   @Test
+  void blacklistReturnsErrorWhenAssetAlreadyBlacklisted() {
+    final var controller = new AssetsGrpcController(
+        findOneAssetSearchStrategyHandler,
+        searchAssetsUseCase,
+        criterionValueExtractor,
+        assetDtoMapper,
+        blacklistAssetUseCase,
+        whitelistAssetUseCase
+    );
+    final UUID id = UUID.randomUUID();
+    final var criterion = tech.maze.dtos.assets.search.Criterion.newBuilder()
+        .setFilter(
+            tech.maze.dtos.assets.search.CriterionFilter.newBuilder()
+                .setById(Value.newBuilder().setStringValue(id.toString()).build())
+                .build()
+        )
+        .build();
+    final var request = tech.maze.dtos.assets.requests.BlacklistRequest.newBuilder()
+        .setCriterion(criterion)
+        .build();
+    when(findOneAssetSearchStrategyHandler.handleSearch(criterion))
+        .thenReturn(Optional.of(new Asset(id, "BTC", "Bitcoin", PrimaryClass.CRYPTO, Instant.now(), true)));
+
+    controller.blacklist(request, blacklistObserver);
+
+    verify(blacklistObserver).onError(org.mockito.ArgumentMatchers.any(Throwable.class));
+    verifyNoInteractions(blacklistAssetUseCase);
+  }
+
+  @Test
   void whitelistDelegatesToUseCaseWhenCriterionResolvesAsset() {
     final var controller = new AssetsGrpcController(
         findOneAssetSearchStrategyHandler,
@@ -208,5 +241,35 @@ class AssetsGrpcControllerTest {
     verify(whitelistAssetUseCase).whitelist(id);
     verify(whitelistObserver).onNext(tech.maze.dtos.assets.requests.WhitelistResponse.getDefaultInstance());
     verify(whitelistObserver).onCompleted();
+  }
+
+  @Test
+  void whitelistReturnsErrorWhenAssetAlreadyWhitelisted() {
+    final var controller = new AssetsGrpcController(
+        findOneAssetSearchStrategyHandler,
+        searchAssetsUseCase,
+        criterionValueExtractor,
+        assetDtoMapper,
+        blacklistAssetUseCase,
+        whitelistAssetUseCase
+    );
+    final UUID id = UUID.randomUUID();
+    final var criterion = tech.maze.dtos.assets.search.Criterion.newBuilder()
+        .setFilter(
+            tech.maze.dtos.assets.search.CriterionFilter.newBuilder()
+                .setById(Value.newBuilder().setStringValue(id.toString()).build())
+                .build()
+        )
+        .build();
+    final var request = tech.maze.dtos.assets.requests.WhitelistRequest.newBuilder()
+        .setCriterion(criterion)
+        .build();
+    when(findOneAssetSearchStrategyHandler.handleSearch(criterion))
+        .thenReturn(Optional.of(new Asset(id, "BTC", "Bitcoin", PrimaryClass.CRYPTO, Instant.now(), false)));
+
+    controller.whitelist(request, whitelistObserver);
+
+    verify(whitelistObserver).onError(org.mockito.ArgumentMatchers.any(Throwable.class));
+    verifyNoInteractions(whitelistAssetUseCase);
   }
 }

@@ -66,14 +66,14 @@ class AssetPersistenceAdapterTest {
   @Test
   void findByDataProviderIdsDelegatesToRepository() {
     final UUID dataProviderId = UUID.randomUUID();
-    when(assetJpaRepository.findAllByDataProviderIds(List.of(dataProviderId.toString()))).thenReturn(List.of(entity));
+    when(assetJpaRepository.findAllByDataProviderIds(List.of(dataProviderId))).thenReturn(List.of(entity));
     when(assetEntityMapper.toDomain(entity)).thenReturn(asset);
 
     final var adapter = new AssetPersistenceAdapter(assetJpaRepository, assetEntityMapper);
     final var result = adapter.findByDataProviderIds(List.of(dataProviderId));
 
     assertThat(result).containsExactly(asset);
-    verify(assetJpaRepository).findAllByDataProviderIds(List.of(dataProviderId.toString()));
+    verify(assetJpaRepository).findAllByDataProviderIds(List.of(dataProviderId));
   }
 
   @Test

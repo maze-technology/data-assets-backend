@@ -72,10 +72,7 @@ public class AssetPersistenceAdapter implements LoadAssetPort, SaveAssetPort, Se
       return List.of();
     }
 
-    List<String> serializedDataProviderIds = dataProviderIds.stream()
-        .map(UUID::toString)
-        .toList();
-    return assetJpaRepository.findAllByDataProviderIds(serializedDataProviderIds).stream()
+    return assetJpaRepository.findAllByDataProviderIds(dataProviderIds).stream()
         .map(assetEntityMapper::toDomain)
         .toList();
   }

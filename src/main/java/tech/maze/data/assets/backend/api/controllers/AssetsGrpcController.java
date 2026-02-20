@@ -54,9 +54,27 @@ public class AssetsGrpcController
     final List<java.util.UUID> dataProviderIds =
         criterionValueExtractor.extractUuids(request.getDataProvidersList());
     final List<Asset> assets = searchAssetsUseCase.findByDataProviderIds(dataProviderIds);
+    final int page = request.hasPagination()
+        ? Math.max(0, (int) request.getPagination().getPage())
+        : 0;
+    final int limit = request.hasPagination()
+        ? Math.max(1, (int) request.getPagination().getLimit())
+        : 50;
+    final int fromIndex = Math.min(assets.size(), page * limit);
+    final int toIndex = Math.min(assets.size(), fromIndex + limit);
+    final List<Asset> pagedAssets = assets.subList(fromIndex, toIndex);
+    final long totalElements = assets.size();
+    final long totalPages = totalElements == 0 ? 0 : (totalElements + limit - 1) / limit;
+
     tech.maze.dtos.assets.requests.FindByDataProvidersResponse response =
         tech.maze.dtos.assets.requests.FindByDataProvidersResponse.newBuilder()
-            .addAllAssets(assets.stream().map(assetDtoMapper::toDto).toList())
+            .addAllAssets(pagedAssets.stream().map(assetDtoMapper::toDto).toList())
+            .setPaginationInfos(
+                tech.maze.dtos.assets.search.PaginationInfos.newBuilder()
+                    .setTotalElements(totalElements)
+                    .setTotalPages(totalPages)
+                    .build()
+            )
             .build();
 
     responseObserver.onNext(response);
@@ -68,11 +86,29 @@ public class AssetsGrpcController
       tech.maze.dtos.assets.requests.BlacklistRequest request,
       StreamObserver<tech.maze.dtos.assets.requests.BlacklistResponse> responseObserver
   ) {
-    if (request.hasCriterion()) {
-      findOneAssetSearchStrategyHandler.handleSearch(request.getCriterion())
-          .map(Asset::id)
-          .ifPresent(blacklistAssetUseCase::blacklist);
+    if (!request.hasCriterion()) {
+      responseObserver.onError(io.grpc.Status.INVALID_ARGUMENT
+          .withDescription("criterion is required")
+          .asRuntimeException());
+      return;
     }
+
+    final Asset asset = findOneAssetSearchStrategyHandler.handleSearch(request.getCriterion())
+        .orElse(null);
+    if (asset == null) {
+      responseObserver.onError(io.grpc.Status.INVALID_ARGUMENT
+          .withDescription("Asset not found")
+          .asRuntimeException());
+      return;
+    }
+    if (Boolean.TRUE.equals(asset.blacklisted())) {
+      responseObserver.onError(io.grpc.Status.INVALID_ARGUMENT
+          .withDescription("Asset already blacklisted")
+          .asRuntimeException());
+      return;
+    }
+
+    blacklistAssetUseCase.blacklist(asset.id());
 
     tech.maze.dtos.assets.requests.BlacklistResponse response =
         tech.maze.dtos.assets.requests.BlacklistResponse.newBuilder().build();
@@ -85,11 +121,29 @@ public class AssetsGrpcController
       tech.maze.dtos.assets.requests.WhitelistRequest request,
       StreamObserver<tech.maze.dtos.assets.requests.WhitelistResponse> responseObserver
   ) {
-    if (request.hasCriterion()) {
-      findOneAssetSearchStrategyHandler.handleSearch(request.getCriterion())
-          .map(Asset::id)
-          .ifPresent(whitelistAssetUseCase::whitelist);
+    if (!request.hasCriterion()) {
+      responseObserver.onError(io.grpc.Status.INVALID_ARGUMENT
+          .withDescription("criterion is required")
+          .asRuntimeException());
+      return;
     }
+
+    final Asset asset = findOneAssetSearchStrategyHandler.handleSearch(request.getCriterion())
+        .orElse(null);
+    if (asset == null) {
+      responseObserver.onError(io.grpc.Status.INVALID_ARGUMENT
+          .withDescription("Asset not found")
+          .asRuntimeException());
+      return;
+    }
+    if (!Boolean.TRUE.equals(asset.blacklisted())) {
+      responseObserver.onError(io.grpc.Status.INVALID_ARGUMENT
+          .withDescription("Asset already whitelisted")
+          .asRuntimeException());
+      return;
+    }
+
+    whitelistAssetUseCase.whitelist(asset.id());
 
     tech.maze.dtos.assets.requests.WhitelistResponse response =
         tech.maze.dtos.assets.requests.WhitelistResponse.newBuilder().build();
