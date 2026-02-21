@@ -75,7 +75,7 @@ public class AssetsGrpcController
         tech.maze.dtos.assets.requests.FindByDataProvidersResponse.newBuilder()
             .addAllAssets(assets.stream().map(assetDtoMapper::toDto).toList())
             .setPaginationInfos(
-                tech.maze.dtos.assets.search.PaginationInfos.newBuilder()
+                tech.maze.dtos.commons.search.PaginationInfos.newBuilder()
                     .setTotalElements(assetsPage.totalElements())
                     .setTotalPages(assetsPage.totalPages())
                     .build()

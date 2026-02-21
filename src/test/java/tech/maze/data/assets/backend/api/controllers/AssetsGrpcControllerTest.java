@@ -130,7 +130,7 @@ class AssetsGrpcControllerTest {
         .addDataProviders(Value.newBuilder().setStringValue(dataProviderA.toString()).build())
         .addDataProviders(Value.newBuilder().setStringValue(dataProviderB.toString()).build())
         .setPagination(
-            tech.maze.dtos.assets.search.Pagination.newBuilder()
+            tech.maze.dtos.commons.search.Pagination.newBuilder()
                 .setPage(0)
                 .setLimit(50)
                 .build()
