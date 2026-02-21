@@ -12,12 +12,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import tech.maze.data.assets.backend.api.support.CriterionValueExtractor;
+import tech.maze.commons.mappers.ProtobufValueMapper;
 import tech.maze.data.assets.backend.domain.models.Asset;
 import tech.maze.data.assets.backend.domain.ports.in.FindAssetUseCase;
+import org.mapstruct.factory.Mappers;
 
 @ExtendWith(MockitoExtension.class)
 class FindOneAssetByIdSearchStrategyTest {
+  private static final ProtobufValueMapper PROTOBUF_VALUE_MAPPER =
+      Mappers.getMapper(ProtobufValueMapper.class);
+
   @Mock
   private FindAssetUseCase findAssetUseCase;
   @Mock
@@ -25,7 +29,7 @@ class FindOneAssetByIdSearchStrategyTest {
 
   @Test
   void supportsOnlyCriterionWithByIdStringValue() {
-    final var strategy = new FindOneAssetByIdSearchStrategy(findAssetUseCase, new CriterionValueExtractor());
+    final var strategy = new FindOneAssetByIdSearchStrategy(findAssetUseCase, PROTOBUF_VALUE_MAPPER);
     final var valid = criterionWithId(UUID.randomUUID().toString());
 
     assertThat(strategy.supports(valid)).isTrue();
@@ -35,7 +39,7 @@ class FindOneAssetByIdSearchStrategyTest {
 
   @Test
   void searchDelegatesToFindUseCaseForValidUuid() {
-    final var strategy = new FindOneAssetByIdSearchStrategy(findAssetUseCase, new CriterionValueExtractor());
+    final var strategy = new FindOneAssetByIdSearchStrategy(findAssetUseCase, PROTOBUF_VALUE_MAPPER);
     final UUID id = UUID.randomUUID();
     final var criterion = criterionWithId(id.toString());
     when(findAssetUseCase.findById(id)).thenReturn(Optional.of(asset));
@@ -48,7 +52,7 @@ class FindOneAssetByIdSearchStrategyTest {
 
   @Test
   void searchReturnsEmptyWhenUuidIsInvalid() {
-    final var strategy = new FindOneAssetByIdSearchStrategy(findAssetUseCase, new CriterionValueExtractor());
+    final var strategy = new FindOneAssetByIdSearchStrategy(findAssetUseCase, PROTOBUF_VALUE_MAPPER);
 
     final var result = strategy.search(criterionWithId("not-a-uuid"));
 

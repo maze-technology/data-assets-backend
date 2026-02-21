@@ -6,24 +6,24 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import com.google.protobuf.Value;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
+import tech.maze.commons.mappers.ProtobufValueMapper;
 import tech.maze.data.assets.backend.domain.models.PrimaryClass;
 
 class AssetDtoMapperTest {
   private final PrimaryClassDtoMapper primaryClassDtoMapper = new PrimaryClassDtoMapper();
-  private final DocumentValueDtoMapper documentValueDtoMapper = new DocumentValueDtoMapper(
-      Mappers.getMapper(tech.maze.commons.mappers.UuidMapper.class)
-  );
+  private final ProtobufValueMapper protobufValueMapper =
+      Mappers.getMapper(ProtobufValueMapper.class);
 
   @Test
   void uuidToValueReturnsDefaultForNull() {
-    assertThat(documentValueDtoMapper.uuidToValue(null)).isEqualTo(Value.getDefaultInstance());
+    assertThat(protobufValueMapper.uuidToValue(null)).isEqualTo(Value.getDefaultInstance());
   }
 
   @Test
   void uuidToValueReturnsStringValueForUuid() {
     final java.util.UUID id = java.util.UUID.randomUUID();
 
-    assertThat(documentValueDtoMapper.uuidToValue(id).getStringValue()).isEqualTo(id.toString());
+    assertThat(protobufValueMapper.uuidToValue(id).getStringValue()).isEqualTo(id.toString());
   }
 
   @Test

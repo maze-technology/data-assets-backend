@@ -12,12 +12,16 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import tech.maze.data.assets.backend.api.support.CriterionValueExtractor;
+import org.mapstruct.factory.Mappers;
+import tech.maze.commons.mappers.ProtobufValueMapper;
 import tech.maze.data.assets.backend.domain.models.Asset;
 import tech.maze.data.assets.backend.domain.ports.in.FindAssetUseCase;
 
 @ExtendWith(MockitoExtension.class)
 class FindOneAssetByDataProviderIdAndDataProviderSymbolSearchStrategyTest {
+  private static final ProtobufValueMapper PROTOBUF_VALUE_MAPPER =
+      Mappers.getMapper(ProtobufValueMapper.class);
+
   @Mock
   private FindAssetUseCase findAssetUseCase;
   @Mock
@@ -27,7 +31,7 @@ class FindOneAssetByDataProviderIdAndDataProviderSymbolSearchStrategyTest {
   void supportsOnlyWhenDataProviderIdAndSymbolArePresent() {
     final var strategy = new FindOneAssetByDataProviderIdAndDataProviderSymbolSearchStrategy(
         findAssetUseCase,
-        new CriterionValueExtractor()
+        PROTOBUF_VALUE_MAPPER
     );
     final UUID dataProviderId = UUID.randomUUID();
 
@@ -40,7 +44,7 @@ class FindOneAssetByDataProviderIdAndDataProviderSymbolSearchStrategyTest {
   void searchDelegatesToFindUseCase() {
     final var strategy = new FindOneAssetByDataProviderIdAndDataProviderSymbolSearchStrategy(
         findAssetUseCase,
-        new CriterionValueExtractor()
+        PROTOBUF_VALUE_MAPPER
     );
     final UUID dataProviderId = UUID.randomUUID();
     final var criterion = criterion(dataProviderId.toString(), "BTC");
@@ -57,7 +61,7 @@ class FindOneAssetByDataProviderIdAndDataProviderSymbolSearchStrategyTest {
   void searchReturnsEmptyWhenDataProviderIdIsInvalid() {
     final var strategy = new FindOneAssetByDataProviderIdAndDataProviderSymbolSearchStrategy(
         findAssetUseCase,
-        new CriterionValueExtractor()
+        PROTOBUF_VALUE_MAPPER
     );
 
     final var result = strategy.search(criterion("not-a-uuid", "BTC"));

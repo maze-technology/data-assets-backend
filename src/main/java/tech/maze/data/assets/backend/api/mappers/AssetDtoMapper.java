@@ -7,6 +7,7 @@ import org.mapstruct.NullValueCheckStrategy;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.mapstruct.ReportingPolicy;
 import tech.maze.commons.mappers.BaseDtoMapper;
+import tech.maze.commons.mappers.ProtobufValueMapper;
 import tech.maze.data.assets.backend.domain.models.Asset;
 
 /**
@@ -20,7 +21,7 @@ import tech.maze.data.assets.backend.domain.models.Asset;
     unmappedTargetPolicy = ReportingPolicy.IGNORE,
     uses = {
       BaseDtoMapper.class,
-      DocumentValueDtoMapper.class,
+      ProtobufValueMapper.class,
       PrimaryClassDtoMapper.class
     }
 )

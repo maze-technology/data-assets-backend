@@ -4,7 +4,7 @@ import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tech.maze.data.assets.backend.api.support.CriterionValueExtractor;
+import tech.maze.commons.mappers.ProtobufValueMapper;
 import tech.maze.data.assets.backend.domain.models.Asset;
 import tech.maze.data.assets.backend.domain.ports.in.FindAssetUseCase;
 import tech.maze.dtos.assets.search.Criterion;
@@ -18,7 +18,7 @@ import tech.maze.dtos.assets.search.CriterionFilterByDataProviderIdAndDataProvid
 public class FindOneAssetByDataProviderIdAndDataProviderMetaDatasAssetIdSearchStrategy
     implements FindOneAssetSearchStrategy {
   private final FindAssetUseCase findAssetUseCase;
-  private final CriterionValueExtractor criterionValueExtractor;
+  private final ProtobufValueMapper protobufValueMapper;
 
   @Override
   public boolean supports(Criterion criterion) {
@@ -30,7 +30,7 @@ public class FindOneAssetByDataProviderIdAndDataProviderMetaDatasAssetIdSearchSt
     CriterionFilterByDataProviderIdAndDataProviderMetaDatasAssetId filter =
         criterion.getFilter().getByDataProviderIdAndDataProviderMetaDatasAssetId();
     return filter.hasDataProviderId()
-        && criterionValueExtractor.extractUuid(filter.getDataProviderId()).isPresent()
+        && protobufValueMapper.toUuid(filter.getDataProviderId()).isPresent()
         && !filter.getDataProviderMetaDatasAssetId().isBlank();
   }
 
@@ -38,7 +38,7 @@ public class FindOneAssetByDataProviderIdAndDataProviderMetaDatasAssetIdSearchSt
   public Optional<Asset> search(Criterion criterion) {
     CriterionFilterByDataProviderIdAndDataProviderMetaDatasAssetId filter =
         criterion.getFilter().getByDataProviderIdAndDataProviderMetaDatasAssetId();
-    Optional<UUID> dataProviderId = criterionValueExtractor.extractUuid(filter.getDataProviderId());
+    Optional<UUID> dataProviderId = protobufValueMapper.toUuid(filter.getDataProviderId());
     if (dataProviderId.isEmpty()) {
       return Optional.empty();
     }

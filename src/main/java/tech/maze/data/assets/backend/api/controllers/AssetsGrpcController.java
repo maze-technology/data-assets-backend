@@ -7,11 +7,11 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import tech.maze.commons.exceptions.GrpcStatusException;
+import tech.maze.commons.mappers.ProtobufValueMapper;
 import tech.maze.commons.pagination.Pagination;
 import tech.maze.commons.pagination.PaginationUtils;
 import tech.maze.data.assets.backend.api.mappers.AssetDtoMapper;
 import tech.maze.data.assets.backend.api.search.FindOneAssetSearchStrategyHandler;
-import tech.maze.data.assets.backend.api.support.CriterionValueExtractor;
 import tech.maze.data.assets.backend.domain.models.Asset;
 import tech.maze.data.assets.backend.domain.models.AssetsPage;
 import tech.maze.data.assets.backend.domain.ports.in.BlacklistAssetUseCase;
@@ -28,7 +28,7 @@ public class AssetsGrpcController
     extends tech.maze.dtos.assets.controllers.AssetsGRPCGrpc.AssetsGRPCImplBase {
   FindOneAssetSearchStrategyHandler findOneAssetSearchStrategyHandler;
   SearchAssetsUseCase searchAssetsUseCase;
-  CriterionValueExtractor criterionValueExtractor;
+  ProtobufValueMapper protobufValueMapper;
   AssetDtoMapper assetDtoMapper;
   BlacklistAssetUseCase blacklistAssetUseCase;
   WhitelistAssetUseCase whitelistAssetUseCase;
@@ -58,10 +58,10 @@ public class AssetsGrpcController
       StreamObserver<tech.maze.dtos.assets.requests.FindByDataProvidersResponse> responseObserver
   ) {
     final List<java.util.UUID> dataProviderIds =
-        criterionValueExtractor.extractUuids(request.getDataProvidersList());
+        protobufValueMapper.toUuids(request.getDataProvidersList());
     final Pagination pagination = PaginationUtils.normalize(
-        request.hasPagination() ? request.getPagination().getPage() : 0L,
-        request.hasPagination() ? request.getPagination().getLimit() : 50L,
+        request.hasPagination() ? request.getPagination().getPage() : 0,
+        request.hasPagination() ? request.getPagination().getLimit() : 50,
         50
     );
     final AssetsPage assetsPage = searchAssetsUseCase.findByDataProviderIds(

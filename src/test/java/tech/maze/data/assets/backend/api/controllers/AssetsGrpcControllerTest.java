@@ -18,9 +18,9 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tech.maze.commons.exceptions.GrpcStatusException;
+import tech.maze.commons.mappers.ProtobufValueMapper;
 import tech.maze.data.assets.backend.api.mappers.AssetDtoMapper;
 import tech.maze.data.assets.backend.api.search.FindOneAssetSearchStrategyHandler;
-import tech.maze.data.assets.backend.api.support.CriterionValueExtractor;
 import tech.maze.data.assets.backend.domain.models.Asset;
 import tech.maze.data.assets.backend.domain.models.AssetsPage;
 import tech.maze.data.assets.backend.domain.models.PrimaryClass;
@@ -35,7 +35,7 @@ class AssetsGrpcControllerTest {
   @Mock
   private SearchAssetsUseCase searchAssetsUseCase;
   @Mock
-  private CriterionValueExtractor criterionValueExtractor;
+  private ProtobufValueMapper protobufValueMapper;
   @Mock
   private AssetDtoMapper assetDtoMapper;
   @Mock
@@ -57,7 +57,7 @@ class AssetsGrpcControllerTest {
     final var controller = new AssetsGrpcController(
         findOneAssetSearchStrategyHandler,
         searchAssetsUseCase,
-        criterionValueExtractor,
+        protobufValueMapper,
         assetDtoMapper,
         blacklistAssetUseCase,
         whitelistAssetUseCase
@@ -95,7 +95,7 @@ class AssetsGrpcControllerTest {
     final var controller = new AssetsGrpcController(
         findOneAssetSearchStrategyHandler,
         searchAssetsUseCase,
-        criterionValueExtractor,
+        protobufValueMapper,
         assetDtoMapper,
         blacklistAssetUseCase,
         whitelistAssetUseCase
@@ -114,7 +114,7 @@ class AssetsGrpcControllerTest {
     final var controller = new AssetsGrpcController(
         findOneAssetSearchStrategyHandler,
         searchAssetsUseCase,
-        criterionValueExtractor,
+        protobufValueMapper,
         assetDtoMapper,
         blacklistAssetUseCase,
         whitelistAssetUseCase
@@ -136,7 +136,7 @@ class AssetsGrpcControllerTest {
                 .build()
         )
         .build();
-    when(criterionValueExtractor.extractUuids(request.getDataProvidersList())).thenReturn(List.of(dataProviderA, dataProviderB));
+    when(protobufValueMapper.toUuids(request.getDataProvidersList())).thenReturn(List.of(dataProviderA, dataProviderB));
     when(searchAssetsUseCase.findByDataProviderIds(List.of(dataProviderA, dataProviderB), 0, 50))
         .thenReturn(new AssetsPage(List.of(assetA, assetB), 2, 1));
     when(assetDtoMapper.toDto(assetA)).thenReturn(dtoA);
@@ -148,7 +148,7 @@ class AssetsGrpcControllerTest {
         ArgumentCaptor.forClass(tech.maze.dtos.assets.requests.FindByDataProvidersResponse.class);
     verify(findByProvidersObserver).onNext(captor.capture());
     verify(findByProvidersObserver).onCompleted();
-    verify(criterionValueExtractor).extractUuids(request.getDataProvidersList());
+    verify(protobufValueMapper).toUuids(request.getDataProvidersList());
     verify(searchAssetsUseCase).findByDataProviderIds(List.of(dataProviderA, dataProviderB), 0, 50);
     assertThat(captor.getValue().getAssetsList()).containsExactly(dtoA, dtoB);
     assertThat(captor.getValue().getPaginationInfos().getTotalElements()).isEqualTo(2);
@@ -160,7 +160,7 @@ class AssetsGrpcControllerTest {
     final var controller = new AssetsGrpcController(
         findOneAssetSearchStrategyHandler,
         searchAssetsUseCase,
-        criterionValueExtractor,
+        protobufValueMapper,
         assetDtoMapper,
         blacklistAssetUseCase,
         whitelistAssetUseCase
@@ -192,7 +192,7 @@ class AssetsGrpcControllerTest {
     final var controller = new AssetsGrpcController(
         findOneAssetSearchStrategyHandler,
         searchAssetsUseCase,
-        criterionValueExtractor,
+        protobufValueMapper,
         assetDtoMapper,
         blacklistAssetUseCase,
         whitelistAssetUseCase
@@ -223,7 +223,7 @@ class AssetsGrpcControllerTest {
     final var controller = new AssetsGrpcController(
         findOneAssetSearchStrategyHandler,
         searchAssetsUseCase,
-        criterionValueExtractor,
+        protobufValueMapper,
         assetDtoMapper,
         blacklistAssetUseCase,
         whitelistAssetUseCase
@@ -255,7 +255,7 @@ class AssetsGrpcControllerTest {
     final var controller = new AssetsGrpcController(
         findOneAssetSearchStrategyHandler,
         searchAssetsUseCase,
-        criterionValueExtractor,
+        protobufValueMapper,
         assetDtoMapper,
         blacklistAssetUseCase,
         whitelistAssetUseCase

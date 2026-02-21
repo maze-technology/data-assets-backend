@@ -3,7 +3,7 @@ package tech.maze.data.assets.backend.api.search;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import tech.maze.data.assets.backend.api.support.CriterionValueExtractor;
+import tech.maze.commons.mappers.ProtobufValueMapper;
 import tech.maze.data.assets.backend.domain.models.Asset;
 import tech.maze.data.assets.backend.domain.ports.in.FindAssetUseCase;
 import tech.maze.dtos.assets.search.Criterion;
@@ -15,7 +15,7 @@ import tech.maze.dtos.assets.search.Criterion;
 @RequiredArgsConstructor
 public class FindOneAssetByIdSearchStrategy implements FindOneAssetSearchStrategy {
   private final FindAssetUseCase findAssetUseCase;
-  private final CriterionValueExtractor criterionValueExtractor;
+  private final ProtobufValueMapper protobufValueMapper;
 
   @Override
   public boolean supports(Criterion criterion) {
@@ -27,7 +27,7 @@ public class FindOneAssetByIdSearchStrategy implements FindOneAssetSearchStrateg
 
   @Override
   public Optional<Asset> search(Criterion criterion) {
-    return criterionValueExtractor.extractUuid(criterion.getFilter().getById())
+    return protobufValueMapper.toUuid(criterion.getFilter().getById())
         .flatMap(findAssetUseCase::findById);
   }
 }
