@@ -39,8 +39,10 @@ public class FindOneAssetBySymbolIgnoreCaseAndNameIgnoreCaseAndPrimaryClassSearc
   public Optional<Asset> search(Criterion criterion) {
     CriterionFilterBySymbolIgnoreCaseAndNameIgnoreCaseAndPrimaryClass filter =
         criterion.getFilter().getBySymbolIgnoreCaseAndNameIgnoreCaseAndPrimaryClass();
-    PrimaryClass primaryClass = primaryClassDtoMapper.toDomain(filter.getPrimaryClass());
-    if (primaryClass == null) {
+    final PrimaryClass primaryClass;
+    try {
+      primaryClass = primaryClassDtoMapper.toDomain(filter.getPrimaryClass());
+    } catch (IllegalArgumentException ignored) {
       return Optional.empty();
     }
 

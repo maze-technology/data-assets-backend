@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
 import tech.maze.commons.exceptions.GrpcStatusException;
+import tech.maze.commons.pagination.Pagination;
+import tech.maze.commons.pagination.PaginationUtils;
 import tech.maze.data.assets.backend.api.mappers.AssetDtoMapper;
 import tech.maze.data.assets.backend.api.search.FindOneAssetSearchStrategyHandler;
 import tech.maze.data.assets.backend.api.support.CriterionValueExtractor;
@@ -55,16 +57,15 @@ public class AssetsGrpcController
   ) {
     final List<java.util.UUID> dataProviderIds =
         criterionValueExtractor.extractUuids(request.getDataProvidersList());
-    final int page = request.hasPagination()
-        ? Math.max(0, (int) request.getPagination().getPage())
-        : 0;
-    final int limit = request.hasPagination()
-        ? Math.max(1, (int) request.getPagination().getLimit())
-        : 50;
+    final Pagination pagination = PaginationUtils.normalize(
+        request.hasPagination() ? request.getPagination().getPage() : 0L,
+        request.hasPagination() ? request.getPagination().getLimit() : 50L,
+        50
+    );
     final AssetsPage assetsPage = searchAssetsUseCase.findByDataProviderIds(
         dataProviderIds,
-        page,
-        limit
+        pagination.page(),
+        pagination.limit()
     );
     final List<Asset> assets = assetsPage.assets();
 

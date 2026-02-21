@@ -15,7 +15,7 @@ public class PrimaryClassDtoMapper {
   @Named("primaryClassToDto")
   public tech.maze.dtos.assets.enums.PrimaryClass toDto(PrimaryClass value) {
     if (value == null) {
-      return tech.maze.dtos.assets.enums.PrimaryClass.UNRECOGNIZED;
+      throw new IllegalArgumentException("primaryClass must not be null");
     }
 
     return switch (value) {
@@ -29,14 +29,18 @@ public class PrimaryClassDtoMapper {
    */
   public PrimaryClass toDomain(tech.maze.dtos.assets.enums.PrimaryClass value) {
     if (value == null) {
-      return null;
+      throw new IllegalArgumentException("primaryClass must not be null");
     }
 
     return switch (value) {
       case FIAT -> PrimaryClass.FIAT;
       case CRYPTO -> PrimaryClass.CRYPTO;
-      case UNRECOGNIZED -> null;
-      default -> null;
+      case UNRECOGNIZED -> throw new IllegalArgumentException(
+          "primaryClass must be defined"
+      );
+      default -> throw new IllegalArgumentException(
+          "primaryClass must be defined"
+      );
     };
   }
 }
