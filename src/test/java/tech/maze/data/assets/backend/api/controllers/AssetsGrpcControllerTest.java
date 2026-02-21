@@ -252,7 +252,7 @@ class AssetsGrpcControllerTest {
   }
 
   @Test
-  void whitelistReturnsErrorWhenAssetAlreadyWhitelisted() {
+  void whitelistDelegatesToUseCaseWhenAssetAlreadyWhitelisted() {
     final var controller = new AssetsGrpcController(
         findOneAssetSearchStrategyHandler,
         searchAssetsUseCase,
@@ -277,7 +277,8 @@ class AssetsGrpcControllerTest {
 
     controller.whitelist(request, whitelistObserver);
 
-    verify(whitelistObserver).onError(org.mockito.ArgumentMatchers.any(Throwable.class));
-    verifyNoInteractions(whitelistAssetUseCase);
+    verify(whitelistAssetUseCase).whitelist(id);
+    verify(whitelistObserver).onNext(tech.maze.dtos.assets.requests.WhitelistResponse.getDefaultInstance());
+    verify(whitelistObserver).onCompleted();
   }
 }
