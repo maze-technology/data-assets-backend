@@ -88,19 +88,13 @@ public class AssetsGrpcController
       StreamObserver<tech.maze.dtos.assets.requests.BlacklistResponse> responseObserver
   ) {
     if (!request.hasCriterion()) {
-      responseObserver.onError(io.grpc.Status.INVALID_ARGUMENT
-          .withDescription("criterion is required")
-          .asRuntimeException());
-      return;
+      throw new IllegalArgumentException("criterion is required");
     }
 
     final Asset asset = findOneAssetSearchStrategyHandler.handleSearch(request.getCriterion())
         .orElse(null);
     if (asset == null) {
-      responseObserver.onError(io.grpc.Status.INVALID_ARGUMENT
-          .withDescription("Asset not found")
-          .asRuntimeException());
-      return;
+      throw new IllegalArgumentException("Asset not found");
     }
 
     blacklistAssetUseCase.blacklist(asset.id());
@@ -117,19 +111,13 @@ public class AssetsGrpcController
       StreamObserver<tech.maze.dtos.assets.requests.WhitelistResponse> responseObserver
   ) {
     if (!request.hasCriterion()) {
-      responseObserver.onError(io.grpc.Status.INVALID_ARGUMENT
-          .withDescription("criterion is required")
-          .asRuntimeException());
-      return;
+      throw new IllegalArgumentException("criterion is required");
     }
 
     final Asset asset = findOneAssetSearchStrategyHandler.handleSearch(request.getCriterion())
         .orElse(null);
     if (asset == null) {
-      responseObserver.onError(io.grpc.Status.INVALID_ARGUMENT
-          .withDescription("Asset not found")
-          .asRuntimeException());
-      return;
+      throw new IllegalArgumentException("Asset not found");
     }
 
     whitelistAssetUseCase.whitelist(asset.id());
