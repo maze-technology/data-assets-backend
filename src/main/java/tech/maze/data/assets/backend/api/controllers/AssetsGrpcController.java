@@ -102,12 +102,6 @@ public class AssetsGrpcController
           .asRuntimeException());
       return;
     }
-    if (Boolean.TRUE.equals(asset.blacklisted())) {
-      responseObserver.onError(io.grpc.Status.INVALID_ARGUMENT
-          .withDescription("Asset already blacklisted")
-          .asRuntimeException());
-      return;
-    }
 
     blacklistAssetUseCase.blacklist(asset.id());
 

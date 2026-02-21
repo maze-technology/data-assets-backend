@@ -189,7 +189,7 @@ class AssetsGrpcControllerTest {
   }
 
   @Test
-  void blacklistReturnsErrorWhenAssetAlreadyBlacklisted() {
+  void blacklistDelegatesToUseCaseWhenAssetAlreadyBlacklisted() {
     final var controller = new AssetsGrpcController(
         findOneAssetSearchStrategyHandler,
         searchAssetsUseCase,
@@ -214,8 +214,9 @@ class AssetsGrpcControllerTest {
 
     controller.blacklist(request, blacklistObserver);
 
-    verify(blacklistObserver).onError(org.mockito.ArgumentMatchers.any(Throwable.class));
-    verifyNoInteractions(blacklistAssetUseCase);
+    verify(blacklistAssetUseCase).blacklist(id);
+    verify(blacklistObserver).onNext(tech.maze.dtos.assets.requests.BlacklistResponse.getDefaultInstance());
+    verify(blacklistObserver).onCompleted();
   }
 
   @Test
