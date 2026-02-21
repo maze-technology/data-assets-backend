@@ -1,0 +1,84 @@
+package tech.maze.data.assets.backend.api.search;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+
+import com.google.protobuf.Value;
+import java.util.Optional;
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import tech.maze.data.assets.backend.api.support.CriterionValueExtractor;
+import tech.maze.data.assets.backend.domain.models.Asset;
+import tech.maze.data.assets.backend.domain.ports.in.FindAssetUseCase;
+
+@ExtendWith(MockitoExtension.class)
+class FindOneAssetByDataProviderIdAndDataProviderSymbolSearchStrategyTest {
+  @Mock
+  private FindAssetUseCase findAssetUseCase;
+  @Mock
+  private Asset asset;
+
+  @Test
+  void supportsOnlyWhenDataProviderIdAndSymbolArePresent() {
+    final var strategy = new FindOneAssetByDataProviderIdAndDataProviderSymbolSearchStrategy(
+        findAssetUseCase,
+        new CriterionValueExtractor()
+    );
+    final UUID dataProviderId = UUID.randomUUID();
+
+    assertThat(strategy.supports(criterion(dataProviderId.toString(), "BTC"))).isTrue();
+    assertThat(strategy.supports(criterion("", "BTC"))).isFalse();
+    assertThat(strategy.supports(criterion(dataProviderId.toString(), " "))).isFalse();
+  }
+
+  @Test
+  void searchDelegatesToFindUseCase() {
+    final var strategy = new FindOneAssetByDataProviderIdAndDataProviderSymbolSearchStrategy(
+        findAssetUseCase,
+        new CriterionValueExtractor()
+    );
+    final UUID dataProviderId = UUID.randomUUID();
+    final var criterion = criterion(dataProviderId.toString(), "BTC");
+    when(findAssetUseCase.findByDataProviderIdAndDataProviderSymbol(dataProviderId, "BTC"))
+        .thenReturn(Optional.of(asset));
+
+    final var result = strategy.search(criterion);
+
+    assertThat(result).contains(asset);
+    verify(findAssetUseCase).findByDataProviderIdAndDataProviderSymbol(dataProviderId, "BTC");
+  }
+
+  @Test
+  void searchReturnsEmptyWhenDataProviderIdIsInvalid() {
+    final var strategy = new FindOneAssetByDataProviderIdAndDataProviderSymbolSearchStrategy(
+        findAssetUseCase,
+        new CriterionValueExtractor()
+    );
+
+    final var result = strategy.search(criterion("not-a-uuid", "BTC"));
+
+    assertThat(result).isEmpty();
+    verifyNoInteractions(findAssetUseCase);
+  }
+
+  private static tech.maze.dtos.assets.search.Criterion criterion(String dataProviderId, String symbol) {
+    return tech.maze.dtos.assets.search.Criterion.newBuilder()
+        .setFilter(
+            tech.maze.dtos.assets.search.CriterionFilter.newBuilder()
+                .setByDataProviderIdAndDataProviderSymbol(
+                    tech.maze.dtos.assets.search.CriterionFilterByDataProviderIdAndDataProviderSymbol
+                        .newBuilder()
+                        .setDataProviderId(Value.newBuilder().setStringValue(dataProviderId).build())
+                        .setSymbol(symbol)
+                        .build()
+                )
+                .build()
+        )
+        .build();
+  }
+}

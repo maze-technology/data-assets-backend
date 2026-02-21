@@ -11,7 +11,7 @@ import tech.maze.data.assets.backend.domain.ports.out.SaveAssetPort;
  */
 @Service
 @RequiredArgsConstructor
-public class SaveAssetService implements SaveAssetUseCase {
+public class SaveAssetUseCaseImpl implements SaveAssetUseCase {
   private final SaveAssetPort saveAssetPort;
 
   @Override

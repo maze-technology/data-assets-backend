@@ -11,5 +11,6 @@ public record Asset(
     String symbol,
     String name,
     PrimaryClass primaryClass,
-    Instant createdAt
+    Instant createdAt,
+    Boolean blacklisted
 ) {}
