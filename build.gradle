@@ -19,7 +19,7 @@ ext {
   snakeyamlVersion            = "2.5"
   postgresqlVersion           = "42.7.10"
   springBootVersion           = "4.0.3"
-  mazeCommonsVersion          = "0.0.14"
+  mazeCommonsVersion          = "0.0.16"
   mazeDtosAssetsVersion   = "0.0.5"
   protobufJavaVersion         = "4.33.5"
   grpcSpringBootVersion       = "1.0.2"
