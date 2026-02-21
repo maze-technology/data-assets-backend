@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.stereotype.Service;
+import tech.maze.commons.exceptions.GrpcStatusException;
 import tech.maze.data.assets.backend.api.mappers.AssetDtoMapper;
 import tech.maze.data.assets.backend.api.search.FindOneAssetSearchStrategyHandler;
 import tech.maze.data.assets.backend.api.support.CriterionValueExtractor;
@@ -88,13 +89,13 @@ public class AssetsGrpcController
       StreamObserver<tech.maze.dtos.assets.requests.BlacklistResponse> responseObserver
   ) {
     if (!request.hasCriterion()) {
-      throw new IllegalArgumentException("criterion is required");
+      throw GrpcStatusException.invalidArgument("criterion is required");
     }
 
     final Asset asset = findOneAssetSearchStrategyHandler.handleSearch(request.getCriterion())
         .orElse(null);
     if (asset == null) {
-      throw new IllegalArgumentException("Asset not found");
+      throw GrpcStatusException.notFound("Asset not found");
     }
 
     blacklistAssetUseCase.blacklist(asset.id());
@@ -111,13 +112,13 @@ public class AssetsGrpcController
       StreamObserver<tech.maze.dtos.assets.requests.WhitelistResponse> responseObserver
   ) {
     if (!request.hasCriterion()) {
-      throw new IllegalArgumentException("criterion is required");
+      throw GrpcStatusException.invalidArgument("criterion is required");
     }
 
     final Asset asset = findOneAssetSearchStrategyHandler.handleSearch(request.getCriterion())
         .orElse(null);
     if (asset == null) {
-      throw new IllegalArgumentException("Asset not found");
+      throw GrpcStatusException.notFound("Asset not found");
     }
 
     whitelistAssetUseCase.whitelist(asset.id());
