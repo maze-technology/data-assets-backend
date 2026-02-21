@@ -20,10 +20,13 @@ public class WhitelistAssetUseCaseImpl implements WhitelistAssetUseCase {
   @Override
   public void whitelist(UUID id) {
     if (id == null) {
-      return;
+      throw new IllegalArgumentException("id is required");
     }
 
-    loadAssetPort.findById(id).ifPresent(asset -> saveAssetPort.save(toWhitelisted(asset)));
+    final Asset asset = loadAssetPort.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("Asset not found"));
+
+    saveAssetPort.save(toWhitelisted(asset));
   }
 
   private static Asset toWhitelisted(Asset asset) {

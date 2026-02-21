@@ -38,13 +38,15 @@ public class AssetsGrpcController
       tech.maze.dtos.assets.requests.FindOneRequest request,
       StreamObserver<tech.maze.dtos.assets.requests.FindOneResponse> responseObserver
   ) {
+    if (!request.hasCriterion()) {
+      throw GrpcStatusException.invalidArgument("criterion is required");
+    }
+
     tech.maze.dtos.assets.requests.FindOneResponse.Builder responseBuilder =
         tech.maze.dtos.assets.requests.FindOneResponse.newBuilder();
-    if (request.hasCriterion()) {
-      findOneAssetSearchStrategyHandler.handleSearch(request.getCriterion())
-          .map(assetDtoMapper::toDto)
-          .ifPresent(responseBuilder::setAsset);
-    }
+    findOneAssetSearchStrategyHandler.handleSearch(request.getCriterion())
+        .map(assetDtoMapper::toDto)
+        .ifPresent(responseBuilder::setAsset);
 
     responseObserver.onNext(responseBuilder.build());
     responseObserver.onCompleted();

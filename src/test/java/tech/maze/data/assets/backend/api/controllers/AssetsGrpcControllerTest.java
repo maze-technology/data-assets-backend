@@ -1,6 +1,7 @@
 package tech.maze.data.assets.backend.api.controllers;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
@@ -16,6 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import tech.maze.commons.exceptions.GrpcStatusException;
 import tech.maze.data.assets.backend.api.mappers.AssetDtoMapper;
 import tech.maze.data.assets.backend.api.search.FindOneAssetSearchStrategyHandler;
 import tech.maze.data.assets.backend.api.support.CriterionValueExtractor;
@@ -89,7 +91,7 @@ class AssetsGrpcControllerTest {
   }
 
   @Test
-  void findOneReturnsEmptyResponseWhenCriterionMissing() {
+  void findOneThrowsWhenCriterionMissing() {
     final var controller = new AssetsGrpcController(
         findOneAssetSearchStrategyHandler,
         searchAssetsUseCase,
@@ -100,14 +102,11 @@ class AssetsGrpcControllerTest {
     );
     final var request = tech.maze.dtos.assets.requests.FindOneRequest.newBuilder().build();
 
-    controller.findOne(request, findOneObserver);
-
-    final ArgumentCaptor<tech.maze.dtos.assets.requests.FindOneResponse> captor =
-        ArgumentCaptor.forClass(tech.maze.dtos.assets.requests.FindOneResponse.class);
-    verify(findOneObserver).onNext(captor.capture());
-    verify(findOneObserver).onCompleted();
+    assertThatThrownBy(() -> controller.findOne(request, findOneObserver))
+        .isInstanceOf(GrpcStatusException.class)
+        .hasMessageContaining("criterion is required");
     verifyNoInteractions(findOneAssetSearchStrategyHandler, assetDtoMapper);
-    assertThat(captor.getValue().hasAsset()).isFalse();
+    verifyNoInteractions(findOneObserver);
   }
 
   @Test

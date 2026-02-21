@@ -20,10 +20,13 @@ public class BlacklistAssetUseCaseImpl implements BlacklistAssetUseCase {
   @Override
   public void blacklist(UUID id) {
     if (id == null) {
-      return;
+      throw new IllegalArgumentException("id is required");
     }
 
-    loadAssetPort.findById(id).ifPresent(asset -> saveAssetPort.save(toBlacklisted(asset)));
+    final Asset asset = loadAssetPort.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("Asset not found"));
+
+    saveAssetPort.save(toBlacklisted(asset));
   }
 
   private static Asset toBlacklisted(Asset asset) {

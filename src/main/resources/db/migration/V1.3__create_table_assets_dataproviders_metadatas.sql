@@ -18,9 +18,3 @@ create table if not exists public.assets_dataproviders_metadatas
 
 create unique index if not exists index_unique_assets_dataproviders_metadatas_asset_provider
   on public.assets_dataproviders_metadatas(asset_id, data_provider_id);
-
-create unique index if not exists index_unique_assets_dataproviders_metadatas_provider_asset
-  on public.assets_dataproviders_metadatas(data_provider_id, provider_asset_id);
-
-create index if not exists index_assets_dataproviders_metadatas_provider_symbol
-  on public.assets_dataproviders_metadatas(data_provider_id, upper(symbol));

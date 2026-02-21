@@ -1,6 +1,7 @@
 package tech.maze.data.assets.backend.domain.usecases;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -41,11 +42,26 @@ class BlacklistAssetUseCaseImplTest {
   }
 
   @Test
-  void doesNothingWhenIdIsNull() {
+  void throwsWhenIdIsNull() {
     final var service = new BlacklistAssetUseCaseImpl(loadAssetPort, saveAssetPort);
-    service.blacklist(null);
+    assertThatThrownBy(() -> service.blacklist(null))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("id is required");
 
     verify(loadAssetPort, never()).findById(any());
+    verify(saveAssetPort, never()).save(any());
+  }
+
+  @Test
+  void throwsWhenAssetNotFound() {
+    final UUID id = UUID.randomUUID();
+    when(loadAssetPort.findById(id)).thenReturn(Optional.empty());
+    final var service = new BlacklistAssetUseCaseImpl(loadAssetPort, saveAssetPort);
+
+    assertThatThrownBy(() -> service.blacklist(id))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessage("Asset not found");
+
     verify(saveAssetPort, never()).save(any());
   }
 }
