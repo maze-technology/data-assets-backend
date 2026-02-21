@@ -5,6 +5,7 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import tech.maze.data.assets.backend.domain.models.Asset;
+import tech.maze.data.assets.backend.domain.models.AssetsPage;
 import tech.maze.data.assets.backend.domain.ports.in.SearchAssetsUseCase;
 import tech.maze.data.assets.backend.domain.ports.out.SearchAssetsPort;
 
@@ -22,7 +23,7 @@ public class SearchAssetsUseCaseImpl implements SearchAssetsUseCase {
   }
 
   @Override
-  public List<Asset> findByDataProviderIds(List<UUID> dataProviderIds) {
-    return searchAssetsPort.findByDataProviderIds(dataProviderIds);
+  public AssetsPage findByDataProviderIds(List<UUID> dataProviderIds, int page, int limit) {
+    return searchAssetsPort.findByDataProviderIds(dataProviderIds, page, limit);
   }
 }

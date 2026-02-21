@@ -12,7 +12,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import tech.maze.data.assets.backend.domain.models.Asset;
+import tech.maze.data.assets.backend.domain.models.AssetsPage;
 import tech.maze.data.assets.backend.domain.models.PrimaryClass;
 import tech.maze.data.assets.backend.infrastructure.persistence.entities.AssetEntity;
 import tech.maze.data.assets.backend.infrastructure.persistence.mappers.AssetEntityMapper;
@@ -58,22 +61,23 @@ class AssetPersistenceAdapterTest {
   void findByDataProviderIdsReturnsEmptyWhenInputIsEmpty() {
     final var adapter = new AssetPersistenceAdapter(assetJpaRepository, assetEntityMapper);
 
-    final var result = adapter.findByDataProviderIds(List.of());
+    final var result = adapter.findByDataProviderIds(List.of(), 0, 50);
 
-    assertThat(result).isEmpty();
+    assertThat(result).isEqualTo(new AssetsPage(List.of(), 0, 0));
   }
 
   @Test
   void findByDataProviderIdsDelegatesToRepository() {
     final UUID dataProviderId = UUID.randomUUID();
-    when(assetJpaRepository.findAllByDataProviderIds(List.of(dataProviderId))).thenReturn(List.of(entity));
+    when(assetJpaRepository.findAllByDataProviderIds(List.of(dataProviderId), PageRequest.of(0, 50)))
+        .thenReturn(new PageImpl<>(List.of(entity), PageRequest.of(0, 50), 1));
     when(assetEntityMapper.toDomain(entity)).thenReturn(asset);
 
     final var adapter = new AssetPersistenceAdapter(assetJpaRepository, assetEntityMapper);
-    final var result = adapter.findByDataProviderIds(List.of(dataProviderId));
+    final var result = adapter.findByDataProviderIds(List.of(dataProviderId), 0, 50);
 
-    assertThat(result).containsExactly(asset);
-    verify(assetJpaRepository).findAllByDataProviderIds(List.of(dataProviderId));
+    assertThat(result).isEqualTo(new AssetsPage(List.of(asset), 1, 1));
+    verify(assetJpaRepository).findAllByDataProviderIds(List.of(dataProviderId), PageRequest.of(0, 50));
   }
 
   @Test

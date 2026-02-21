@@ -4,12 +4,16 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 import tech.maze.data.assets.backend.domain.models.Asset;
+import tech.maze.data.assets.backend.domain.models.AssetsPage;
 import tech.maze.data.assets.backend.domain.models.PrimaryClass;
 import tech.maze.data.assets.backend.domain.ports.out.LoadAssetPort;
 import tech.maze.data.assets.backend.domain.ports.out.SaveAssetPort;
 import tech.maze.data.assets.backend.domain.ports.out.SearchAssetsPort;
+import tech.maze.data.assets.backend.infrastructure.persistence.entities.AssetEntity;
 import tech.maze.data.assets.backend.infrastructure.persistence.mappers.AssetEntityMapper;
 import tech.maze.data.assets.backend.infrastructure.persistence.repositories.AssetJpaRepository;
 
@@ -67,14 +71,17 @@ public class AssetPersistenceAdapter implements LoadAssetPort, SaveAssetPort, Se
   }
 
   @Override
-  public List<Asset> findByDataProviderIds(List<UUID> dataProviderIds) {
+  public AssetsPage findByDataProviderIds(List<UUID> dataProviderIds, int page, int limit) {
     if (dataProviderIds == null || dataProviderIds.isEmpty()) {
-      return List.of();
+      return new AssetsPage(List.of(), 0, 0);
     }
 
-    return assetJpaRepository.findAllByDataProviderIds(dataProviderIds).stream()
+    final Page<AssetEntity> results =
+        assetJpaRepository.findAllByDataProviderIds(dataProviderIds, PageRequest.of(page, limit));
+    final List<Asset> assets = results.getContent().stream()
         .map(assetEntityMapper::toDomain)
         .toList();
+    return new AssetsPage(assets, results.getTotalElements(), results.getTotalPages());
   }
 
   @Override
