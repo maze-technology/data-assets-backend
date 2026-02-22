@@ -21,6 +21,9 @@ public class PrimaryClassDtoMapper {
     return switch (value) {
       case FIAT -> tech.maze.dtos.assets.enums.PrimaryClass.FIAT;
       case CRYPTO -> tech.maze.dtos.assets.enums.PrimaryClass.CRYPTO;
+      default -> throw new IllegalArgumentException(
+          "primaryClass must be defined"
+      );
     };
   }
 
