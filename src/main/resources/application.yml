@@ -28,3 +28,5 @@ spring:
     enabled: true
   cache:
     enabled: false
+maze:
+  assets-per-page: 50

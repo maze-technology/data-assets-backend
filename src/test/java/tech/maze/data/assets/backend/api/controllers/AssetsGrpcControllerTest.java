@@ -19,6 +19,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tech.maze.commons.exceptions.GrpcStatusException;
 import tech.maze.commons.mappers.ProtobufValueMapper;
+import tech.maze.data.assets.backend.AppProperties;
 import tech.maze.data.assets.backend.api.mappers.AssetDtoMapper;
 import tech.maze.data.assets.backend.api.search.FindOneAssetSearchStrategyHandler;
 import tech.maze.data.assets.backend.domain.models.Asset;
@@ -60,7 +61,8 @@ class AssetsGrpcControllerTest {
         protobufValueMapper,
         assetDtoMapper,
         blacklistAssetUseCase,
-        whitelistAssetUseCase
+        whitelistAssetUseCase,
+        appProperties()
     );
     final UUID id = UUID.randomUUID();
     final var request = tech.maze.dtos.assets.requests.FindOneRequest.newBuilder()
@@ -98,7 +100,8 @@ class AssetsGrpcControllerTest {
         protobufValueMapper,
         assetDtoMapper,
         blacklistAssetUseCase,
-        whitelistAssetUseCase
+        whitelistAssetUseCase,
+        appProperties()
     );
     final var request = tech.maze.dtos.assets.requests.FindOneRequest.newBuilder().build();
 
@@ -117,7 +120,8 @@ class AssetsGrpcControllerTest {
         protobufValueMapper,
         assetDtoMapper,
         blacklistAssetUseCase,
-        whitelistAssetUseCase
+        whitelistAssetUseCase,
+        appProperties()
     );
     final var assetA = new Asset(UUID.randomUUID(), "BTC", "Bitcoin", PrimaryClass.CRYPTO, Instant.now(), false);
     final var assetB = new Asset(UUID.randomUUID(), "EUR", "Euro", PrimaryClass.FIAT, Instant.now(), false);
@@ -163,7 +167,8 @@ class AssetsGrpcControllerTest {
         protobufValueMapper,
         assetDtoMapper,
         blacklistAssetUseCase,
-        whitelistAssetUseCase
+        whitelistAssetUseCase,
+        appProperties()
     );
     final UUID id = UUID.randomUUID();
     final var criterion = tech.maze.dtos.assets.search.Criterion.newBuilder()
@@ -195,7 +200,8 @@ class AssetsGrpcControllerTest {
         protobufValueMapper,
         assetDtoMapper,
         blacklistAssetUseCase,
-        whitelistAssetUseCase
+        whitelistAssetUseCase,
+        appProperties()
     );
     final UUID id = UUID.randomUUID();
     final var criterion = tech.maze.dtos.assets.search.Criterion.newBuilder()
@@ -226,7 +232,8 @@ class AssetsGrpcControllerTest {
         protobufValueMapper,
         assetDtoMapper,
         blacklistAssetUseCase,
-        whitelistAssetUseCase
+        whitelistAssetUseCase,
+        appProperties()
     );
     final UUID id = UUID.randomUUID();
     final var criterion = tech.maze.dtos.assets.search.Criterion.newBuilder()
@@ -258,7 +265,8 @@ class AssetsGrpcControllerTest {
         protobufValueMapper,
         assetDtoMapper,
         blacklistAssetUseCase,
-        whitelistAssetUseCase
+        whitelistAssetUseCase,
+        appProperties()
     );
     final UUID id = UUID.randomUUID();
     final var criterion = tech.maze.dtos.assets.search.Criterion.newBuilder()
@@ -279,5 +287,11 @@ class AssetsGrpcControllerTest {
     verify(whitelistAssetUseCase).whitelist(id);
     verify(whitelistObserver).onNext(tech.maze.dtos.assets.requests.WhitelistResponse.getDefaultInstance());
     verify(whitelistObserver).onCompleted();
+  }
+
+  private static AppProperties appProperties() {
+    final AppProperties appProperties = new AppProperties();
+    appProperties.setAssetsPerPage(50);
+    return appProperties;
   }
 }

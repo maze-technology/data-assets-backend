@@ -10,6 +10,7 @@ import tech.maze.commons.exceptions.GrpcStatusException;
 import tech.maze.commons.mappers.ProtobufValueMapper;
 import tech.maze.commons.pagination.Pagination;
 import tech.maze.commons.pagination.PaginationUtils;
+import tech.maze.data.assets.backend.AppProperties;
 import tech.maze.data.assets.backend.api.mappers.AssetDtoMapper;
 import tech.maze.data.assets.backend.api.search.FindOneAssetSearchStrategyHandler;
 import tech.maze.data.assets.backend.domain.models.Asset;
@@ -32,6 +33,7 @@ public class AssetsGrpcController
   AssetDtoMapper assetDtoMapper;
   BlacklistAssetUseCase blacklistAssetUseCase;
   WhitelistAssetUseCase whitelistAssetUseCase;
+  AppProperties appProperties;
 
   @Override
   public void findOne(
@@ -59,10 +61,11 @@ public class AssetsGrpcController
   ) {
     final List<java.util.UUID> dataProviderIds =
         protobufValueMapper.toUuids(request.getDataProvidersList());
+    final int defaultLimit = appProperties.getAssetsPerPage();
     final Pagination pagination = PaginationUtils.normalize(
         request.hasPagination() ? request.getPagination().getPage() : 0,
-        request.hasPagination() ? request.getPagination().getLimit() : 50,
-        50
+        request.hasPagination() ? request.getPagination().getLimit() : defaultLimit,
+        defaultLimit
     );
     final AssetsPage assetsPage = searchAssetsUseCase.findByDataProviderIds(
         dataProviderIds,
