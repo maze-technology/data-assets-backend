@@ -8,8 +8,5 @@ create table if not exists public.assets
   created_at    timestamp with time zone not null default now()
 );
 
-alter table if exists public.assets
-  add column if not exists blacklisted boolean not null;
-
 create unique index if not exists index_unique_assets
   on public.assets (upper(symbol), upper(name), primary_class);
