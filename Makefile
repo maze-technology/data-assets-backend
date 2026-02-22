@@ -2,10 +2,10 @@ build:
 	@./gradlew build
 
 test:
-	@./gradlew test
+	@./gradlew test $(if $(RERUN_TESTS),--rerun-tasks,)
 
 test-coverage-verification: test
-	@./gradlew jacocoTestCoverageVerification
+	@./gradlew jacocoTestCoverageVerification $(if $(RERUN_TESTS),--rerun-tasks,)
 
 spotbugs:
 	@./gradlew spotbugsMain spotbugsTest spotbugsIntegrationTest

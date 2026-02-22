@@ -20,7 +20,7 @@ ext {
   postgresqlVersion           = "42.7.10"
   springBootVersion           = "4.0.3"
   mazeCommonsVersion          = "0.0.19"
-  mazeDtosAssetsVersion   = "0.0.8"
+  mazeDtosAssetsVersion       = "0.0.8"
   protobufJavaVersion         = "4.33.5"
   grpcSpringBootVersion       = "1.0.2"
   testContainersVersion       = "2.0.3"
@@ -47,7 +47,7 @@ repositories {
   }
 
   maven {
-    url "https://maven.pkg.github.com/maze-technology/tech.maze.commons"
+    url "https://maven.pkg.github.com/maze-technology/data-assets-specs"
 
     // INFO: Pulling from GitHub Packages (even public ones) requires a personal access token
     // https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token
@@ -58,7 +58,7 @@ repositories {
   }
 
   maven {
-    url "https://maven.pkg.github.com/maze-technology/data-assets-specs"
+    url "https://maven.pkg.github.com/maze-technology/tech.maze.commons"
 
     // INFO: Pulling from GitHub Packages (even public ones) requires a personal access token
     // https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token
@@ -234,8 +234,11 @@ jacocoTestReport {
         '**/domain/ports/**',
         // Entities - JPA entities, data containers
         '**/infrastructure/persistence/entities/**',
-        // Mappers - MapStruct interfaces (code is generated)
+        // API layer (grpc/eventstream/mappers) covered by separate integration tests
+        '**/api/controllers/**',
+        '**/api/eventstream/**',
         '**/api/mappers/**',
+        '**/api/support/**',
         '**/infrastructure/persistence/mappers/**',
         // Configuration classes - wiring code
         '**/infrastructure/config/**',
@@ -257,6 +260,8 @@ tasks.named("jacocoTestReport") {
 }
 
 jacocoTestCoverageVerification {
+  dependsOn test
+
   violationRules {
     rule {
       limit {
@@ -277,8 +282,11 @@ jacocoTestCoverageVerification {
         '**/infrastructure/persistence/entities/**',
         // Event stream handlers (integration-level)
         '**/infrastructure/eventstream/**',
-        // Mappers - MapStruct interfaces (code is generated)
+        // API layer (grpc/eventstream/mappers/support) covered by separate integration tests
+        '**/api/controllers/**',
+        '**/api/eventstream/**',
         '**/api/mappers/**',
+        '**/api/support/**',
         '**/infrastructure/persistence/mappers/**',
         // Configuration classes - wiring code
         '**/infrastructure/config/**',

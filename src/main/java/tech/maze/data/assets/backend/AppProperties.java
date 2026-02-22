@@ -15,4 +15,5 @@ public class AppProperties {
   public static final String PREFIX = "maze";
 
   String name;
+  int assetsPerPage = 50;
 }

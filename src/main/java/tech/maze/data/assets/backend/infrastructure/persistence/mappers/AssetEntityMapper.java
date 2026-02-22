@@ -1,6 +1,7 @@
 package tech.maze.data.assets.backend.infrastructure.persistence.mappers;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import tech.maze.data.assets.backend.domain.models.Asset;
 import tech.maze.data.assets.backend.infrastructure.persistence.entities.AssetEntity;
 
@@ -17,5 +18,6 @@ public interface AssetEntityMapper {
   /**
    * Generated method.
    */
+  @Mapping(target = "dataProvidersMetaDatas", ignore = true)
   AssetEntity toEntity(Asset asset);
 }

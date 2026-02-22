@@ -10,6 +10,7 @@ logging:
 
 maze:
   name: data-assets
+  assets-per-page: 50
 
 spring:
   datasource:

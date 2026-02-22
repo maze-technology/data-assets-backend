@@ -3,8 +3,10 @@ package tech.maze.data.assets.backend.infrastructure.persistence.entities;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,4 +36,10 @@ public class AssetEntity {
 
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
+
+  @Column(name = "blacklisted", nullable = false)
+  private Boolean blacklisted;
+
+  @OneToMany(mappedBy = "asset")
+  private List<AssetDataProviderMetaDataEntity> dataProvidersMetaDatas;
 }
