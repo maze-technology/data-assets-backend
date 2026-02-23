@@ -56,7 +56,8 @@ public class AssetMetaDatasEventService {
       AssetMetaDatas payload,
       PrimaryClass primaryClass
   ) {
-    final AssetEntity asset = assetJpaRepository.findFirstBySymbolIgnoreCaseAndNameIgnoreCaseAndPrimaryClass(
+    final AssetEntity asset = assetJpaRepository
+        .findFirstBySymbolIgnoreCaseAndNameIgnoreCaseAndPrimaryClass(
             payload.getAsset().getSymbol(),
             payload.getAsset().getName(),
             primaryClass
