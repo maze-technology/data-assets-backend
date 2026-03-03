@@ -30,7 +30,7 @@ ext {
   mapStructSpringVersion      = "2.0.0"
   cloudEventsSpringVersion    = "4.0.1"
   springCloudVersion          = "2025.1.1"
-  lz4JavaVersion              = "1.10.3"
+  lz4JavaVersion              = "1.10.4"
 }
 
 repositories {
