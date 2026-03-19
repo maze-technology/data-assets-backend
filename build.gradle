@@ -4,7 +4,7 @@ plugins {
   id("checkstyle")
   id("application")
   id("com.github.spotbugs") version "6.4.8"
-  id("org.springframework.boot") version "4.0.3"
+  id("org.springframework.boot") version "4.0.4"
   id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -18,7 +18,7 @@ ext {
   mapStructVersion            = "1.6.3"
   snakeyamlVersion            = "2.6"
   postgresqlVersion           = "42.7.10"
-  springBootVersion           = "4.0.3"
+  springBootVersion           = "4.0.4"
   mazeCommonsVersion          = "0.0.19"
   mazeDtosAssetsVersion       = "0.0.8"
   protobufJavaVersion         = "4.34.0"
