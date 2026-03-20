@@ -21,7 +21,7 @@ ext {
   springBootVersion           = "4.0.4"
   mazeCommonsVersion          = "0.0.19"
   mazeDtosAssetsVersion       = "0.0.8"
-  protobufJavaVersion         = "4.34.0"
+  protobufJavaVersion         = "4.34.1"
   grpcSpringBootVersion       = "1.0.2"
   testContainersVersion       = "2.0.4"
   mapStructSPIProtobufVersion = "1.1.0"
