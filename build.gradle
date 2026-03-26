@@ -4,7 +4,7 @@ plugins {
   id("checkstyle")
   id("application")
   id("com.github.spotbugs") version "6.4.8"
-  id("org.springframework.boot") version "4.0.4"
+  id("org.springframework.boot") version "4.0.5"
   id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -18,7 +18,7 @@ ext {
   mapStructVersion            = "1.6.3"
   snakeyamlVersion            = "2.6"
   postgresqlVersion           = "42.7.10"
-  springBootVersion           = "4.0.4"
+  springBootVersion           = "4.0.5"
   mazeCommonsVersion          = "0.0.19"
   mazeDtosAssetsVersion       = "0.0.8"
   protobufJavaVersion         = "4.34.1"
@@ -26,7 +26,7 @@ ext {
   testContainersVersion       = "2.0.4"
   mapStructSPIProtobufVersion = "1.1.0"
   lombokMapstructBindingVersion = "0.2.0"
-  flywayVersion               = "12.1.1"
+  flywayVersion               = "12.2.0"
   mapStructSpringVersion      = "2.0.0"
   cloudEventsSpringVersion    = "4.0.1"
   springCloudVersion          = "2025.1.1"
