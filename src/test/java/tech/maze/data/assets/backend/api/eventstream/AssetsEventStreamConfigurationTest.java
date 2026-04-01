@@ -10,6 +10,7 @@ import static org.mockito.Mockito.when;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;
 import io.cloudevents.core.data.BytesCloudEventData;
+import io.cloudevents.protobuf.ProtoCloudEventData;
 import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import java.net.URI;
 import java.util.function.Consumer;
@@ -25,6 +26,8 @@ import tech.maze.commons.eventstream.EventSender;
 class AssetsEventStreamConfigurationTest {
   @Mock
   private EventSender eventSender;
+  @Mock
+  private AssetMetaDatasEventService assetMetaDatasEventService;
 
   @Mock
   private ObjectProvider<io.micrometer.core.instrument.MeterRegistry> meterRegistryProvider;
@@ -33,7 +36,11 @@ class AssetsEventStreamConfigurationTest {
 
   @BeforeEach
   void setUp() {
-    configuration = new AssetsEventStreamConfiguration(eventSender, meterRegistryProvider);
+    configuration = new AssetsEventStreamConfiguration(
+        eventSender,
+        assetMetaDatasEventService,
+        meterRegistryProvider
+    );
   }
 
   @Test
@@ -95,5 +102,34 @@ class AssetsEventStreamConfigurationTest {
             tech.maze.dtos.assets.events.EventTypes.SYNC_ASSETS_REQUEST
         ).count()
     );
+  }
+
+  @Test
+  void processesFetchResponseWithSingleAssetMetaData() {
+    Consumer<CloudEvent> consumer = configuration.fetchAssetsResponseConsumer();
+    tech.maze.dtos.assets.models.AssetMetaDatas payload =
+        tech.maze.dtos.assets.models.AssetMetaDatas.newBuilder()
+            .setDataProviderId(com.google.protobuf.Value.newBuilder().setStringValue("11111111-1111-1111-1111-111111111111").build())
+            .setAsset(
+                tech.maze.dtos.assets.models.AssetMetaDatasAsset.newBuilder()
+                    .setId("BTC")
+                    .setSymbol("BTC")
+                    .setName("Bitcoin")
+                    .build()
+            )
+            .setPrimaryClass(tech.maze.dtos.assets.enums.PrimaryClass.CRYPTO)
+            .putExtraDatas("k", "v")
+            .putToolBox("k", "v")
+            .build();
+    CloudEvent event = CloudEventBuilder.v1()
+        .withId("evt-fetch-response")
+        .withSource(URI.create("urn:test"))
+        .withType(tech.maze.dtos.assets.events.EventTypes.FETCH_ASSETS_RESPONSE)
+        .withData(ProtoCloudEventData.wrap(payload))
+        .build();
+
+    consumer.accept(event);
+
+    verify(assetMetaDatasEventService).process(payload);
   }
 }
