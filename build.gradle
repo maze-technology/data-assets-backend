@@ -3,8 +3,8 @@ plugins {
   id("jacoco")
   id("checkstyle")
   id("application")
-  id("com.github.spotbugs") version "6.5.0"
-  id("org.springframework.boot") version "4.0.5"
+  id("com.github.spotbugs") version "6.5.1"
+  id("org.springframework.boot") version "4.0.6"
   id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -13,20 +13,20 @@ group = "tech.maze"
 ext {
   jakartaVersion              = "3.0.0"
   junitVersion                = "6.0.3"
-  lombokVersion               = "1.18.44"
+  lombokVersion               = "1.18.46"
   wiremockVersion             = "3.13.2"
   mapStructVersion            = "1.6.3"
   snakeyamlVersion            = "2.6"
-  postgresqlVersion           = "42.7.10"
-  springBootVersion           = "4.0.5"
+  postgresqlVersion           = "42.7.11"
+  springBootVersion           = "4.0.6"
   mazeCommonsVersion          = "0.0.19"
   mazeDtosAssetsVersion       = "0.0.8"
   protobufJavaVersion         = "4.34.1"
-  grpcSpringBootVersion       = "1.0.2"
-  testContainersVersion       = "2.0.4"
+  grpcSpringBootVersion       = "1.0.3"
+  testContainersVersion       = "2.0.5"
   mapStructSPIProtobufVersion = "1.1.0"
   lombokMapstructBindingVersion = "0.2.0"
-  flywayVersion               = "12.4.0"
+  flywayVersion               = "12.5.0"
   mapStructSpringVersion      = "2.0.0"
   cloudEventsSpringVersion    = "4.0.2"
   springCloudVersion          = "2025.1.1"
@@ -166,7 +166,7 @@ dependencies {
 }
 
 checkstyle {
-  toolVersion = "13.4.0"
+  toolVersion = "13.4.1"
   config = resources.text.fromFile("$rootDir/config/checkstyle/checkstyle.xml")
   maxWarnings = 0
   ignoreFailures = false
