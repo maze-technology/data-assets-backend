@@ -28,7 +28,7 @@ ext {
   lombokMapstructBindingVersion = "0.2.0"
   flywayVersion               = "12.8.1"
   mapStructSpringVersion      = "2.0.0"
-  cloudEventsSpringVersion    = "4.1.0"
+  cloudEventsSpringVersion    = "5.0.0"
   springCloudVersion          = "2025.1.1"
   lz4JavaVersion              = "1.11.0"
 }
