@@ -51,9 +51,11 @@ repositories {
 
     // GitLab group Package Registry (data-platform). Prefer GITLAB_MAVEN_* (Deploy Token /
     // group CI vars); CI can also use gitlab-ci-token + CI_JOB_TOKEN when job-token allowlists permit.
+    // Treat blank as missing — empty env (e.g. masked var wiped by CI) must not block fallback.
     credentials {
       username = System.getenv("GITLAB_MAVEN_USER") ?: "gitlab-ci-token"
-      password = System.getenv("GITLAB_MAVEN_PASSWORD") ?: System.getenv("CI_JOB_TOKEN") ?: System.getenv("GITLAB_TOKEN")
+      password = [System.getenv("GITLAB_MAVEN_PASSWORD"), System.getenv("CI_JOB_TOKEN"), System.getenv("GITLAB_TOKEN")]
+        .find { it != null && !it.trim().isEmpty() }
     }
   }
 }
