@@ -47,24 +47,13 @@ repositories {
   }
 
   maven {
-    url "https://maven.pkg.github.com/maze-technology/data-assets-specs"
+    url System.getenv("GITLAB_MAVEN_URL") ?: "https://scm.maze.trading/api/v4/groups/6/-/packages/maven"
 
-    // INFO: Pulling from GitHub Packages (even public ones) requires a personal access token
-    // https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token
+    // GitLab group Package Registry (data-platform). Prefer GITLAB_MAVEN_* (Deploy Token /
+    // group CI vars); CI can also use gitlab-ci-token + CI_JOB_TOKEN when job-token allowlists permit.
     credentials {
-      username = System.getenv("GITHUB_USERNAME")
-      password = System.getenv("GITHUB_TOKEN")
-    }
-  }
-
-  maven {
-    url "https://maven.pkg.github.com/maze-technology/tech.maze.commons"
-
-    // INFO: Pulling from GitHub Packages (even public ones) requires a personal access token
-    // https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens#creating-a-fine-grained-personal-access-token
-    credentials {
-      username = System.getenv("GITHUB_USERNAME")
-      password = System.getenv("GITHUB_TOKEN")
+      username = System.getenv("GITLAB_MAVEN_USER") ?: "gitlab-ci-token"
+      password = System.getenv("GITLAB_MAVEN_PASSWORD") ?: System.getenv("CI_JOB_TOKEN") ?: System.getenv("GITLAB_TOKEN")
     }
   }
 }
