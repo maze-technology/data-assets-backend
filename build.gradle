@@ -4,7 +4,7 @@ plugins {
   id("checkstyle")
   id("application")
   id("com.github.spotbugs") version "6.5.5"
-  id("org.springframework.boot") version "4.0.6"
+  id("org.springframework.boot") version "4.0.7"
   id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -17,8 +17,9 @@ ext {
   wiremockVersion             = "3.13.2"
   mapStructVersion            = "1.6.3"
   snakeyamlVersion            = "2.6"
-  postgresqlVersion           = "42.7.11"
-  springBootVersion           = "4.0.6"
+  postgresqlVersion           = "42.7.12"
+  springBootVersion           = "4.0.7"
+  nettyVersion               = "4.2.16.Final"
   mazeCommonsVersion          = "0.0.19"
   mazeDtosAssetsVersion       = "0.0.8"
   protobufJavaVersion         = "4.35.0"
@@ -69,6 +70,8 @@ dependencyManagement {
     mavenBom "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
   }
 }
+
+ext['netty.version'] = nettyVersion
 
 configurations.configureEach {
   resolutionStrategy.dependencySubstitution {
