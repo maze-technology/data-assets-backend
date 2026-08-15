@@ -1,0 +1,36 @@
+# Dual-publish: GitLab Container Registry = runtime SoT; Docker Hub optional.
+# GitLab CI is the primary publish path (GH Actions publish.yaml disabled).
+#
+# Built-in (no config): CI_REGISTRY, CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY_IMAGE
+#
+# Optional CI/CD variables (project or group) for Hub mirror:
+#   DOCKERHUB_USERNAME, DOCKERHUB_TOKEN, DOCKERHUB_REPOSITORY
+#
+# Required for Gradle resolve against GitHub Packages:
+#   GITHUB_USERNAME (e.g. x-access-token), GITHUB_TOKEN
+
+stages: [build, secure]
+
+include:
+  - project: "data-platform/infrastructure-base"
+    ref: "main"
+    file: "/ci/templates/container-publish.gitlab-ci.yml"
+    inputs:
+      job_image: eclipse-temurin:21-jdk
+      build_script: |
+        set -euo pipefail
+        apt-get update -qq && apt-get install -y -qq curl unzip ca-certificates >/dev/null
+        export SDKMAN_DIR="$HOME/.sdkman"
+        curl -s "https://get.sdkman.io" | bash >/dev/null
+        # shellcheck disable=SC1091
+        source "$SDKMAN_DIR/bin/sdkman-init.sh"
+        sdk env install
+        export JAVA_HOME="$SDKMAN_DIR/candidates/java/current"
+        export GITHUB_USERNAME="${GITHUB_USERNAME:-x-access-token}"
+        ./gradlew bootBuildImage --imageName="${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
+  - project: "data-platform/infrastructure-base"
+    ref: "main"
+    file: "/ci/templates/container-secure.gitlab-ci.yml"
+    inputs:
+      image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+      severity: HIGH
