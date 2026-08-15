@@ -10,9 +10,15 @@
 # Gradle resolve uses GitLab group Maven (GITLAB_MAVEN_* group CI vars / CI_JOB_TOKEN).
 # job_image already provides JDK 21 — no SDKMAN in CI.
 
-stages: [build, secure]
+stages: [test, build, secure]
 
 include:
+  - project: "data-platform/infrastructure-base"
+    ref: "develop"
+    file: "/ci/templates/java-build.gitlab-ci.yml"
+    inputs:
+      job_image: eclipse-temurin:21-jdk
+      build_script: "./gradlew test"
   - project: "data-platform/infrastructure-base"
     ref: "develop"
     file: "/ci/templates/tag-release.gitlab-ci.yml"
