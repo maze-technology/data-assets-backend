@@ -6,8 +6,8 @@
 # Optional CI/CD variables (project or group) for Hub mirror:
 #   DOCKERHUB_USERNAME, DOCKERHUB_TOKEN, DOCKERHUB_REPOSITORY
 #
-# Required for Gradle resolve against GitHub Packages:
-#   GITHUB_USERNAME (e.g. x-access-token), GITHUB_TOKEN
+# Gradle resolve uses GitLab group Maven (GITLAB_MAVEN_* group CI vars / CI_JOB_TOKEN).
+# Note: job-token allowlists may still be needed if not using Deploy Token vars.
 
 stages: [build, secure]
 
@@ -26,7 +26,9 @@ include:
         source "$SDKMAN_DIR/bin/sdkman-init.sh"
         sdk env install
         export JAVA_HOME="$SDKMAN_DIR/candidates/java/current"
-        export GITHUB_USERNAME="${GITHUB_USERNAME:-x-access-token}"
+        export GITLAB_MAVEN_URL="${GITLAB_MAVEN_URL:-https://scm.maze.trading/api/v4/groups/6/-/packages/maven}"
+        export GITLAB_MAVEN_USER="${GITLAB_MAVEN_USER:-gitlab-ci-token}"
+        export GITLAB_MAVEN_PASSWORD="${GITLAB_MAVEN_PASSWORD:-${CI_JOB_TOKEN:-}}"
         ./gradlew bootBuildImage --imageName="${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
   - project: "data-platform/infrastructure-base"
     ref: "main"
