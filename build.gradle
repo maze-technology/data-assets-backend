@@ -72,8 +72,15 @@ dependencyManagement {
 }
 
 ext['netty.version'] = nettyVersion
+ext['httpcore5.version'] = '5.4.3'
 
 configurations.configureEach {
+  resolutionStrategy {
+    force(
+      "org.apache.httpcomponents.core5:httpcore5:5.4.3",
+      "org.apache.httpcomponents.core5:httpcore5-h2:5.4.3",
+    )
+  }
   resolutionStrategy.dependencySubstitution {
     substitute module("org.lz4:lz4-java") using module("at.yawk.lz4:lz4-java:$lz4JavaVersion") because "Trivy flagged CVE-2025-12183 and CVE-2025-66566 in lz4-java 1.8.0."
   }
