@@ -81,6 +81,12 @@ configurations.configureEach {
 
 dependencies {
   constraints {
+    implementation("org.apache.httpcomponents.core5:httpcore5:5.4.3") {
+      because "Fix CVE-2026-54399 flagged by Trivy."
+    }
+    implementation("org.apache.httpcomponents.core5:httpcore5-h2:5.4.3") {
+      because "Fix CVE-2026-54428 flagged by Trivy."
+    }
     implementation("at.yawk.lz4:lz4-java:$lz4JavaVersion") {
       because "Fix CVE-2025-12183 and CVE-2025-66566 flagged by the build scan."
     }
