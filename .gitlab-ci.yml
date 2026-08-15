@@ -1,0 +1,32 @@
+# Dual-publish: GitLab Container Registry = runtime SoT; Docker Hub optional.
+# GitLab CI is the primary publish path (GH Actions publish.yaml disabled).
+#
+# Built-in (no config): CI_REGISTRY, CI_REGISTRY_USER, CI_REGISTRY_PASSWORD, CI_REGISTRY_IMAGE
+#
+# Optional CI/CD variables (project or group) for Hub mirror:
+#   DOCKERHUB_USERNAME, DOCKERHUB_TOKEN, DOCKERHUB_REPOSITORY
+#
+# Gradle resolve uses GitLab group Maven (GITLAB_MAVEN_* group CI vars / CI_JOB_TOKEN).
+# job_image already provides JDK 21 — no SDKMAN in CI.
+
+stages: [build, secure]
+
+include:
+  - project: "data-platform/infrastructure-base"
+    ref: "develop"
+    file: "/ci/templates/container-publish.gitlab-ci.yml"
+    inputs:
+      job_image: eclipse-temurin:21-jdk
+      build_script: |
+        set -euo pipefail
+        java -version
+        export GITLAB_MAVEN_URL="${GITLAB_MAVEN_URL:-https://scm.maze.trading/api/v4/groups/6/-/packages/maven}"
+        export GITLAB_MAVEN_USER="${GITLAB_MAVEN_USER:-gitlab-ci-token}"
+        export GITLAB_MAVEN_PASSWORD="${GITLAB_MAVEN_PASSWORD:-${CI_JOB_TOKEN:-}}"
+        ./gradlew bootBuildImage --imageName="${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
+  - project: "data-platform/infrastructure-base"
+    ref: "develop"
+    file: "/ci/templates/container-secure.gitlab-ci.yml"
+    inputs:
+      image: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+      severity: HIGH
