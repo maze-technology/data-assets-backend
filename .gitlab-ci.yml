@@ -17,7 +17,7 @@ include:
     file: "/ci/templates/container-publish.gitlab-ci.yml"
     inputs:
       job_image: eclipse-temurin:21-jdk
-      build_script: "./gradlew bootBuildImage --imageName=${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
+      build_script: "./gradlew bootJar && docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} ."
   - project: "data-platform/infrastructure-base"
     ref: "develop"
     file: "/ci/templates/container-secure.gitlab-ci.yml"
