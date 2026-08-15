@@ -20,9 +20,6 @@ include:
       build_script: |
         set -euo pipefail
         java -version
-        # Do not re-export GITLAB_MAVEN_* here: build_script is stored in a CI
-        # variable then eval'd; masked GITLAB_MAVEN_PASSWORD expands to empty and
-        # would overwrite the real group deploy-token env. Gradle reads group vars.
         ./gradlew bootBuildImage --imageName="${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA}"
   - project: "data-platform/infrastructure-base"
     ref: "develop"
