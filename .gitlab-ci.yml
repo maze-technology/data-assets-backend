@@ -1,3 +1,4 @@
+# Auto-tag on main → versioned Maven/Cargo/container publish on the tag pipeline.
 # Dual-publish: GitLab Container Registry = runtime SoT; Docker Hub optional.
 # GitLab CI is the primary publish path (GH Actions publish.yaml disabled).
 #
@@ -12,6 +13,9 @@
 stages: [build, secure]
 
 include:
+  - project: "data-platform/infrastructure-base"
+    ref: "develop"
+    file: "/ci/templates/tag-release.gitlab-ci.yml"
   - project: "data-platform/infrastructure-base"
     ref: "develop"
     file: "/ci/templates/container-publish.gitlab-ci.yml"
