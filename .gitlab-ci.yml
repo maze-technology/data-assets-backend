@@ -25,6 +25,9 @@ include:
     file: "/ci/templates/tag-release.gitlab-ci.yml"
   - project: "data-platform/infrastructure-base"
     ref: "develop"
+    file: "/ci/templates/release-approval.gitlab-ci.yml"
+  - project: "data-platform/infrastructure-base"
+    ref: "develop"
     file: "/ci/templates/container-publish.gitlab-ci.yml"
     inputs:
       job_image: eclipse-temurin:21-jdk
