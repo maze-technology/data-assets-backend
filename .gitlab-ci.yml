@@ -8,7 +8,7 @@
 #   DOCKERHUB_USERNAME, DOCKERHUB_TOKEN, DOCKERHUB_REPOSITORY
 #
 # Gradle resolve uses GitLab group Maven (GITLAB_MAVEN_* group CI vars / CI_JOB_TOKEN).
-# job_image already provides JDK 21 — no SDKMAN in CI.
+# SDKMAN runs when .sdkmanrc is present (use_sdkman default true in templates).
 
 stages: [test, build, secure]
 
@@ -18,6 +18,7 @@ include:
     file: "/ci/templates/java-build.gitlab-ci.yml"
     inputs:
       job_image: eclipse-temurin:21-jdk
+      use_sdkman: "true"
       build_script: "./gradlew test"
   - project: "data-platform/infrastructure-base"
     ref: "develop"
@@ -27,6 +28,7 @@ include:
     file: "/ci/templates/container-publish.gitlab-ci.yml"
     inputs:
       job_image: eclipse-temurin:21-jdk
+      use_sdkman: "true"
       build_script: "./gradlew bootJar && docker build -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_SHA} ."
   - project: "data-platform/infrastructure-base"
     ref: "develop"
