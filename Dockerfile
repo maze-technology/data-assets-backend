@@ -1,5 +1,5 @@
 # Spring Boot fat-jar runtime image (avoids Paketo downloading Liberica from GitHub in CI).
-FROM eclipse-temurin:21-jre-jammy
+FROM eclipse-temurin:25.0.4_7-jre-jammy
 WORKDIR /app
 ARG JAR_FILE=build/libs/*-SNAPSHOT.jar
 # Prefer non-SNAPSHOT when tagged builds produce versioned jars
