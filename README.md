@@ -2,7 +2,6 @@
 
 Backend service for the data assets domain, built with Spring Boot and Maze conventions.
 
-[![Continuous Integration (CI)](https://github.com/maze-technology/data-assets-backend/actions/workflows/publish.yaml/badge.svg?branch=main)](https://github.com/maze-technology/data-assets-backend/actions/workflows/publish.yaml)
 
 ## Quality
 
