@@ -1,7 +1,10 @@
 package tech.maze.data.assets.backend.api.eventstream;
 
 import com.google.protobuf.Empty;
+import com.google.protobuf.InvalidProtocolBufferException;
 import io.cloudevents.CloudEvent;
+import io.cloudevents.CloudEventData;
+import io.cloudevents.protobuf.ProtoCloudEventData;
 import io.micrometer.core.instrument.MeterRegistry;
 import java.util.function.Consumer;
 import lombok.AccessLevel;
@@ -25,6 +28,7 @@ import tech.maze.commons.eventstream.MazeEventProperties;
 @Slf4j
 public class AssetsEventStreamConfiguration {
   EventSender eventSender;
+  AssetMetaDatasEventService assetMetaDatasEventService;
   ObjectProvider<MeterRegistry> meterRegistryProvider;
 
   /**
@@ -75,6 +79,52 @@ public class AssetsEventStreamConfiguration {
           tech.maze.dtos.assets.events.EventTypes.SYNC_ASSETS_REQUEST
       );
     };
+  }
+
+  /**
+   * Handles FetchAssetsResponse events delivered via the event stream.
+   *
+   * <p>One event carries one asset metadata payload.
+   * </p>
+   *
+   * @return a consumer for CloudEvents
+   */
+  @Bean
+  public Consumer<CloudEvent> fetchAssetsResponseConsumer() {
+    return event -> {
+      if (!tech.maze.dtos.assets.events.EventTypes.FETCH_ASSETS_RESPONSE.equals(event.getType())) {
+        log.warn(
+            "Skipping event type {} (expected {})",
+            event.getType(),
+            tech.maze.dtos.assets.events.EventTypes.FETCH_ASSETS_RESPONSE
+        );
+        return;
+      }
+
+      final tech.maze.dtos.assets.models.AssetMetaDatas payload = extractAssetMetaDatas(event);
+      assetMetaDatasEventService.process(payload);
+    };
+  }
+
+  private tech.maze.dtos.assets.models.AssetMetaDatas extractAssetMetaDatas(CloudEvent event) {
+    final CloudEventData cloudEventData = event.getData();
+    if (cloudEventData == null) {
+      throw new IllegalArgumentException("CloudEvent payload is required");
+    }
+
+    try {
+      if (cloudEventData instanceof ProtoCloudEventData protoCloudEventData) {
+        final com.google.protobuf.Any any = protoCloudEventData.getAny();
+        if (any.is(tech.maze.dtos.assets.models.AssetMetaDatas.class)) {
+          return any.unpack(tech.maze.dtos.assets.models.AssetMetaDatas.class);
+        }
+        return tech.maze.dtos.assets.models.AssetMetaDatas.parseFrom(any.getValue());
+      }
+
+      return tech.maze.dtos.assets.models.AssetMetaDatas.parseFrom(cloudEventData.toBytes());
+    } catch (InvalidProtocolBufferException ex) {
+      throw new IllegalArgumentException("Invalid AssetMetaDatas payload", ex);
+    }
   }
 
   private void sendReply(CloudEvent event, com.google.protobuf.Message response, String eventType) {
